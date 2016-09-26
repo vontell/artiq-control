@@ -2,8 +2,12 @@
 
 ### Tasks
 
-* Obtain mini USB cable for Pipistrello hookup
+* Get new hard drive for computer
+
+### Mon Sep 26
+
+* Found out that Mac does not support the flashing software for Pipistrello. Instead, the environment has been setup with Ubuntu.
 
 ### Wed Sep 21
 
-* Setup most of the ARTIQ environment on OSX following the instructions [here](https://m-labs.hk/artiq/manual-release-2/installing_from_source.html#install-from-source).
+* Setup most of the ARTIQ environment on OSX following the instructions [here](https://m-labs.hk/artiq/manual-release-2/installing_from_source.html#install-from-source).   
