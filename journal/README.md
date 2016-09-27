@@ -2,7 +2,11 @@
 
 ### Tasks
 
-* Get new hard drive for computer
+* Finish flashing and connecting to Pipistrello
+
+### Tue Sep 27
+
+* ARTIQ and Ubuntu configured on desktop in lab. Pipistrello not yet connected.
 
 ### Mon Sep 26
 
