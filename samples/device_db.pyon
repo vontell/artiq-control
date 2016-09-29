@@ -133,26 +133,6 @@
         "arguments": {"spi_device": "spi0", "ldac_device": "ttl0"}
     },
 
-    "dds0": {
-        "type": "local",
-        "module": "artiq.coredevice.dds",
-        "class": "AD9914",
-        "arguments": {"bus_channel": 26, "channel": 0},
-        "comment": "Comments work in DDS panel as well"
-    },
-    "dds1": {
-        "type": "local",
-        "module": "artiq.coredevice.dds",
-        "class": "AD9914",
-        "arguments": {"bus_channel": 26, "channel": 1}
-    },
-    "dds2": {
-        "type": "local",
-        "module": "artiq.coredevice.dds",
-        "class": "AD9914",
-        "arguments": {"bus_channel": 26, "channel": 2}
-    },
-
     "qc_q1_0": {
         "type": "controller",
         # ::1 is the IPv6 localhost address. If this controller is running on a remote machine,
