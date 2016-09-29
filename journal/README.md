@@ -2,9 +2,9 @@
 
 ### Tasks
 
-* Configured `device_db.pyon` for thorough connection to the board
+* Configure `device_db.pyon` for thorough connection to the board (need LED locations)
 * Run first experiment on the board (simple LED experiments will suffice)
-* Follow the steps [here](https://m-labs.hk/artiq/manual-release-2/getting_started_mgmt.html) to use the ARTIQ GUI!
+* Checkout datasets and applets within the GUI, following the instructions [here](https://m-labs.hk/artiq/manual-release-2/getting_started_mgmt.html#datasets)
 
 ### Thu Sep 29
 
