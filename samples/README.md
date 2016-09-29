@@ -12,3 +12,4 @@ NOTE: `device_db.pyon` is configured for use with the Pipistrello board (or will
 ```sudo pppd /dev/ttyUSB1 115200 noauth nodetach local nocrtscts novj 10.0.0.1:10.0.0.2```
 4. Run your experiments with `artiq_run your-experiment.py`
 5. Use the GUI to run your experiments by running `artiq_master` in one terminal window, and `artiq_dashboard` in another window. Note that the current directory must have a `device_db.pyon` file and a `repository/` directory to hold experiments. This step may also take a few moments to run.
+6. If changes are made to the experiment, run the command `artiq_client scan-repository` to refresh the GUI

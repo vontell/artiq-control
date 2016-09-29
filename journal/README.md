@@ -6,6 +6,11 @@
 * Run first experiment on the board (simple LED experiments will suffice)
 * Follow the steps [here](https://m-labs.hk/artiq/manual-release-2/getting_started_mgmt.html) to use the ARTIQ GUI!
 
+### Thu Sep 29
+
+* ARTIQ can successfully count numbers using the experiment called `Count`, which is contained within the `simple-count.py` file.
+* Learned that the experiment code can be refreshed using the command `artiq_client scan-repository` while active in the `(artiq-main)` environment
+
 ### Wed Sep 28
 
 * ARTIQ has been futher configured. I have successfully connected to the Pipistrello, and am making progress on configuring a `device_db.pyon` file for further testing that the board is actually connected. Current issues include finding the correct RTIO channel that corresponds to the LED on the board.
