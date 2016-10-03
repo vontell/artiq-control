@@ -6,6 +6,10 @@
 * Run first experiment on the board (simple LED experiments will suffice)
 * Checkout datasets and applets within the GUI, following the instructions [here](https://m-labs.hk/artiq/manual-release-2/getting_started_mgmt.html#datasets)
 
+### Mon Oct 03
+
+* Liesure reading and studying on the [Barrett and Kok Protocol](http://journals.aps.org/pra/pdf/10.1103/PhysRevA.71.060310), along with [this paper](https://openaccess.leidenuniv.nl/bitstream/handle/1887/43200/Thesis%20Jacob%20Bakermans.pdf?sequence=1).
+
 ### Thu Sep 29
 
 * ARTIQ can successfully count numbers using the experiment called `Count`, which is contained within the `simple-count.py` file.

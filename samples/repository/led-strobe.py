@@ -8,16 +8,16 @@ from artiq.experiment import *
 class LED(EnvExperiment):
 	def build(self):
 		self.setattr_device("core")
-		self.setattr_device("led")
+		self.setattr_device("USER_LED_1")
 
 	@kernel
 	def run(self):
 		on = False
 		while(True):
-			delay(500*s)
+			delay(500*ms)
 			if on:
 				on = False
-				self.led.off()
+				self.USER_LED_1.off()
 			else:
 				on = True
-				self.led.on()
+				self.USER_LED_1.on()
