@@ -12,12 +12,13 @@ class LED(EnvExperiment):
 
 	@kernel
 	def run(self):
-		on = False
-		while(True):
-			delay(500*ms)
-			if on:
-				on = False
-				self.USER_LED_1.off()
-			else:
-				on = True
-				self.USER_LED_1.on()
+		self.core.reset()
+		s = input_led_state()
+		self.core.break_realtime()
+		if s:
+			self.USER_LED_1.on()
+		else:
+			self.USER_LED_1.off()
+
+def input_led_state() -> TBool:
+	return input("Enter desired LED state: ") == "1"

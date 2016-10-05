@@ -2,9 +2,15 @@
 
 ### Tasks
 
-* Configure `device_db.pyon` for thorough connection to the board (need LED locations)
-* Run first experiment on the board (simple LED experiments will suffice)
+* Create fully configured `device_db.pyon` for Pipistrello board
 * Checkout datasets and applets within the GUI, following the instructions [here](https://m-labs.hk/artiq/manual-release-2/getting_started_mgmt.html#datasets)
+* Test TTL outputs with oscilliscope
+
+### Wed Oct 05
+
+* LED and TTL outputs working on Pipistrello board
+* `device_db.pyon` file partially configured
+* Ran first experiment
 
 ### Mon Oct 03
 
