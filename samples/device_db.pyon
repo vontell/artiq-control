@@ -37,11 +37,32 @@
         "comment": "This is a fairly long comment to test word wrapping in GUI."
     },
 
-    "USER_LED_1": {
+    "led1": {
         "type": "local",
         "module": "artiq.coredevice.ttl",
         "class": "TTLOut",
         "arguments": {"channel": 18}
+    },
+
+    "led2": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLOut",
+        "arguments": {"channel": 19}
+    },
+
+    "led3": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLOut",
+        "arguments": {"channel": 20}
+    },
+
+    "led4": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLOut",
+        "arguments": {"channel": 21}
     }
 
 }

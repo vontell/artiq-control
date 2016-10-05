@@ -8,7 +8,7 @@ from artiq.experiment import *
 class LED(EnvExperiment):
 	def build(self):
 		self.setattr_device("core")
-		self.setattr_device("USER_LED_1")
+		self.setattr_device("led1")
 
 	@kernel
 	def run(self):
@@ -16,9 +16,9 @@ class LED(EnvExperiment):
 		s = input_led_state()
 		self.core.break_realtime()
 		if s:
-			self.USER_LED_1.on()
+			self.led1.on()
 		else:
-			self.USER_LED_1.off()
+			self.led1.off()
 
 def input_led_state() -> TBool:
 	return input("Enter desired LED state: ") == "1"

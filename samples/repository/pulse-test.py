@@ -1,23 +1,32 @@
-# A simple program that runs multiple experiments to determine the maximum
-# speed at which our setup can pulse a device
+# Tests the connection to the board by flashing each LED light
 # Author: Aaron Vontell
-# Date: 9-30-2016
+# Date: 10-05-2016
 
 from artiq.experiment import *
 
-class PulseTest(EnvExperiment):
+class LedPulseTest(EnvExperiment):
 	def build(self):
 		self.setattr_device("core")
 		self.setattr_device("ttl0")
+		self.setattr_device("led1")
+		self.setattr_device("led2")
+		self.setattr_device("led3")
+		self.setattr_device("led4")
 
 	@kernel
 	def run(self):
+
 		try:
-			for i in range(1000):
-				self.ttl0.pulse(1*ns)
-				delay(1*ns)
-				if i == (1000 - 1):
-					print("Finshed test")
+			self.core.break_realtime()
+			self.led1.pulse(250*ms)
+			self.led2.pulse(250*ms)
+			self.led3.pulse(250*ms)
+			self.led4.pulse(250*ms)
+			with parallel:
+				self.led1.pulse(500*ms)
+				self.led2.pulse(500*ms)
+				self.led3.pulse(500*ms)
+				self.led4.pulse(500*ms)
 		except RTIOUnderflow:
 			print_underflow()
 
