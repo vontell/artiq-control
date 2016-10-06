@@ -33,8 +33,105 @@
         "type": "local",
         "module": "artiq.coredevice.ttl",
         "class": "TTLOut",
-        "arguments": {"channel": 0},
-        "comment": "This is a fairly long comment to test word wrapping in GUI."
+        "arguments": {"channel": 2},
+    },
+
+    "ttl1": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLOut",
+        "arguments": {"channel": 3},
+    },
+
+    "ttl2": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLOut",
+        "arguments": {"channel": 4},
+    },
+
+    "ttl3": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLOut",
+        "arguments": {"channel": 5},
+    },
+
+    "ttl4": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLOut",
+        "arguments": {"channel": 6},
+    },
+
+    "ttl5": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLOut",
+        "arguments": {"channel": 7},
+    },
+
+    "ttl6": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLOut",
+        "arguments": {"channel": 8},
+    },
+
+    "ttl7": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLOut",
+        "arguments": {"channel": 9},
+    },
+
+    "ttl8": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLOut",
+        "arguments": {"channel": 10},
+    },
+    
+    "ttl9": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLOut",
+        "arguments": {"channel": 11},
+    },
+    
+    "ttl10": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLOut",
+        "arguments": {"channel": 12},
+    },
+    
+    "ttl11": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLOut",
+        "arguments": {"channel": 13},
+    },
+    
+    "ttl12": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLOut",
+        "arguments": {"channel": 14},
+    },
+    
+    "ttl13": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLOut",
+        "arguments": {"channel": 15},
+    },
+    
+    "ttl14": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLOut",
+        "arguments": {"channel": 16},
     },
 
     "led1": {
