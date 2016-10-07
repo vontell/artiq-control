@@ -15,7 +15,8 @@ class LedPulseTest(EnvExperiment):
 
 	@kernel
 	def run(self):
-
+		self.core.reset()
+		
 		try:
 			self.core.break_realtime()
 			self.led1.pulse(250*ms)
