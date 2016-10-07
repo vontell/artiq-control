@@ -6,6 +6,15 @@
 * Checkout datasets and applets within the GUI, following the instructions [here](https://m-labs.hk/artiq/manual-release-2/getting_started_mgmt.html#datasets)
 * Test TTL outputs with oscilliscope
 
+### Fri Oct 07
+
+* Started to test TTL outputs on oscilliscope (needs further testing with assistance)
+
+### Thu Oct 06
+
+* Created `pulse-test.py`, which simply flashes LEDs on the board in order to test the connection.
+* Configured TTL outputs within `device_db.pyon`
+
 ### Wed Oct 05
 
 * LED and TTL outputs working on Pipistrello board
