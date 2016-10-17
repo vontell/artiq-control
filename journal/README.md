@@ -6,6 +6,11 @@
 * Checkout datasets and applets within the GUI, following the instructions [here](https://m-labs.hk/artiq/manual-release-2/getting_started_mgmt.html#datasets)
 * Test TTL outputs with oscilliscope
 
+### Mon Oct 17
+
+* Using the email correspondence [here](https://ssl.serverraum.org/lists-archive/artiq/2016-October/001022.html), and the TTL mappings [here](https://github.com/m-labs/artiq/blob/master/artiq/gateware/nist_qc1.py#L4), the Pipistrello board is finally putting out a signal as expected. Testing has been done on TTL0, generating the following square wave:
+![alt text](https://i.imgur.com/jwL8DKM.jpg "Logo Title Text 1")
+
 ### Fri Oct 07
 
 * Started to test TTL outputs on oscilliscope (needs further testing with assistance)
