@@ -2,12 +2,14 @@
 
 ### Tasks
 
-* Create fully configured `device_db.pyon` for Pipistrello board
-* Checkout datasets and applets within the GUI, following the instructions [here](https://m-labs.hk/artiq/manual-release-2/getting_started_mgmt.html#datasets)
-* Test TTL outputs with oscilliscope
+* Create fully configured `device_db.pyon` for Pipistrello board (Tue)
+* Test TTL outputs with oscilliscope (Tue)
+* Checkout datasets and applets within the GUI, following the instructions [here](https://m-labs.hk/artiq/manual-release-2/getting_started_mgmt.html#datasets) (Wed)
+* Begin testing inputs through feedback on the board (simulate the response of a Single Photon Detector?)
 
 ### Mon Oct 17
 
+* Determined the lower bound on the Pipistrello speed; UnderflowErrors are common around pulses of length 1 microsecond, and are always apparent at pulses of under 1 microsecond.
 * Using the email correspondence [here](https://ssl.serverraum.org/lists-archive/artiq/2016-October/001022.html), and the TTL mappings [here](https://github.com/m-labs/artiq/blob/master/artiq/gateware/nist_qc1.py#L4), the Pipistrello board is finally putting out a signal as expected. Testing has been done on TTL0, generating the following square wave:
 ![alt text](https://i.imgur.com/jwL8DKM.jpg "Logo Title Text 1")
 

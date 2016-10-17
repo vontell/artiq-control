@@ -62,8 +62,8 @@ class TTLTest(EnvExperiment):
             
             # Pulse the ttl
             for i in range(100000000):
-                delay(2*us)
-                self.ttl0.pulse(2*us)
+                delay(1*us)
+                self.ttl0.pulse(1*us)
             
         except RTIOUnderflow:
             print_underflow()
