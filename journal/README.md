@@ -2,10 +2,14 @@
 
 ### Tasks
 
-* Create fully configured `device_db.pyon` for Pipistrello board (Tue)
-* Test TTL outputs with oscilliscope (Tue)
 * Checkout datasets and applets within the GUI, following the instructions [here](https://m-labs.hk/artiq/manual-release-2/getting_started_mgmt.html#datasets) (Wed)
 * Begin testing inputs through feedback on the board (simulate the response of a Single Photon Detector?)
+
+### Wed Oct 19
+
+* Tested the TTL outputs and created a mapping of all TTL lines to ports on the bound, which can be found within the [samples folder](https://github.com/vontell/artiq-control/tree/master/samples).
+* Configured `device_db.pyon` with another TTL output (TTL15)
+* Configuration finished for `device_db.pyon` (besides PMT and DDS config)
 
 ### Mon Oct 17
 

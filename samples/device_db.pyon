@@ -133,6 +133,13 @@
         "class": "TTLOut",
         "arguments": {"channel": 16},
     },
+	
+	"ttl15": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLOut",
+        "arguments": {"channel": 17},
+    },
 
     "led1": {
         "type": "local",
