@@ -97,7 +97,7 @@ class Board:
       
     # Returns the core device, in situations where granular control is
     # necessary
-    def get_core():
+    def get_core(self):
         return self.experiment.core
         
 	# Returns a string that can be printed when an UnderflowError occurs
