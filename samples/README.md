@@ -16,23 +16,25 @@ NOTE: `device_db.pyon` is configured for use with the Pipistrello board. Make su
 
 ## Output Mappings
 
-The ARTIQ framework allows us to perform inputs and outputs through TTL. Below is a mapping of all TTL output lines to their corresponding ports on the Pipistrello LX45 FPGA board.
+The ARTIQ framework allows us to perform inputs and outputs through TTL. Below is a mapping of all TTL output lines and PMT input lines to their corresponding ports on the Pipistrello LX45 FPGA board.
 
-| `TTL` | `Channel:Port` |
-|-------|----------------|
-| TTL0  | C:11           |
-| TTL1  | C:10           |
-| TTL2  | C:9            |
-| TTL3  | C:8            |
-| TTL4  | C:7            |
-| TTL5  | C:6            |
-| TTL6  | C:5            |
-| TTL7  | C:4            |
-| TTL8  | C:3            |
-| TTL9  | C:2            |
-| TTL10 | C:1            |
-| TTL11 | C:0            |
-| TTL12 | B:4            |
-| TTL13 | A:11           |
-| TTL14 | B:5            |
-| TTL15 | B:8            |
+| `TTL`/`PMT` | `Channel:Port` |
+|-------------|----------------|
+| TTL0        | C:11           |
+| TTL1        | C:10           |
+| TTL2        | C:9            |
+| TTL3        | C:8            |
+| TTL4        | C:7            |
+| TTL5        | C:6            |
+| TTL6        | C:5            |
+| TTL7        | C:4            |
+| TTL8        | C:3            |
+| TTL9        | C:2            |
+| TTL10       | C:1            |
+| TTL11       | C:0            |
+| TTL12       | B:4            |
+| TTL13       | A:11           |
+| TTL14       | B:5            |
+| TTL15       | B:8            |
+| PMT0        | C:13           |
+| PMT1        | C:14           |
