@@ -3,7 +3,13 @@
 ### Tasks
 
 * Checkout datasets and applets within the GUI, following the instructions [here](https://m-labs.hk/artiq/manual-release-2/getting_started_mgmt.html#datasets) (Wed)
-* Begin testing inputs through feedback on the board (simulate the response of a Single Photon Detector?)
+* Finish initialization and fix bugs with Pipistrello abstraction
+
+## Wed Oct 26
+
+* Succesfully received input in the form of a "rising edge"; the board generates a signal with 10 rising edges from `TTL1`, which is channeled to `PMT0`, which reads the number of rising edges and prints the count. This experiment is located in the repo as `InputTest` in `input-test.py`. We can now use this for, say, detecting a rising edge from a device such as a single photon detector.
+* Updated the `device_db.pyon` file to include input channels `PMT0` and `PMT1`
+* Possible issue: it seems as though the NIST QC1 only has two input ports.
 
 ### Wed Oct 19
 

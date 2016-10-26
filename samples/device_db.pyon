@@ -28,6 +28,20 @@
         "module": "artiq.coredevice.i2c",
         "class": "PCA9548"
     },
+	
+	"pmt0": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLInOut",
+        "arguments": {"channel": 0},
+    },
+	
+	"pmt1": {
+        "type": "local",
+        "module": "artiq.coredevice.ttl",
+        "class": "TTLInOut",
+        "arguments": {"channel": 1},
+    },
 
     "ttl0": {
         "type": "local",

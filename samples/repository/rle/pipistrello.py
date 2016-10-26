@@ -32,7 +32,7 @@ class Board:
 		experiment.setattr_device('ttl13')
 		experiment.setattr_device('ttl14')
 		experiment.setattr_device('ttl15')
-        experiment.setattr_device("led1")
+		experiment.setattr_device("led1")
 		experiment.setattr_device("led2")
 		experiment.setattr_device("led3")
 		experiment.setattr_device("led4")
@@ -56,30 +56,30 @@ class Board:
 			experiment.ttl15
 		]
         
-        self.leds = [
-            experiment.led1,
-            experiment.led2,
-            experiment.led3,
-            experiment.led4
-        ]
+		self.leds = [
+			experiment.led1,
+			experiment.led2,
+			experiment.led3,
+			experiment.led4
+		]
 		
 	# Resets the board This should be called at the start of every 'run'
 	# command in your experiment
 	def reset(self):
-		self.experiment.core.reset()
+		self.get_core().reset()
 	
 	# Flashes LEDs on the board to test the connection
 	def led_test(self):
-			self.core.break_realtime() # TODO: Determine if this is necessary
-			self.led1.pulse(250*ms)
-			self.led2.pulse(250*ms)
-			self.led3.pulse(250*ms)
-			self.led4.pulse(250*ms)
+			self.get_core().break_realtime() # TODO: Determine if this is necessary
+			self.leds[0].pulse(250*ms)
+			self.leds[1].pulse(250*ms)
+			self.leds[2].pulse(250*ms)
+			self.leds[3].pulse(250*ms)
 			with parallel:
-				self.led1.pulse(500*ms)
-				self.led2.pulse(500*ms)
-				self.led3.pulse(500*ms)
-				self.led4.pulse(500*ms)
+				self.leds[0].pulse(500*ms)
+				self.leds[1].pulse(500*ms)
+				self.leds[2].pulse(500*ms)
+				self.leds[3].pulse(500*ms)
 		
 	# Pulses the FPGA on ttl with a period of period. If no length is given,
 	# then the pulse will be continuous. Otherwise, the pulse will occur for
@@ -89,16 +89,15 @@ class Board:
 		
 		if length is None:
 			while True:
-				experiment.delay(half_period)
+				self.ttls[ttl].delay(half_period)
 				self.ttls[ttl].pulse(half_period)
 		else:
 			raise NotImplementedError
-		
-      
-    # Returns the core device, in situations where granular control is
-    # necessary
-    def get_core(self):
-        return self.experiment.core
+			
+	# Returns the core device, in situations where granular control is
+	# necessary
+	def get_core(self):
+		return self.experiment.core
         
 	# Returns a string that can be printed when an UnderflowError occurs
 	# These errors occur when you run the board at a speed that is too fast

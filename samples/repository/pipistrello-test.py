@@ -16,14 +16,14 @@ class PipistrelloTest(EnvExperiment):
 	@kernel
 	def run(self):
 		
-		self.board.reset()
+		# self.board.reset()
 		
 		try:
 			
-            # flash the board to confirm connection
-            self.board.led_test()
+			# flash the board to confirm connection
+			self.board.led_test()
 			# pulse ttl = 0 for T = 4 us
-			self.board.pulse(0, 4 * us)
+			# self.board.pulse(0, 4 * us)
 			
 		except RTIOUnderflow:
 			
