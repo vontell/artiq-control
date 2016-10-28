@@ -14,8 +14,10 @@ class Board:
 		self.experiment = experiment
 		experiment.setattr_device('core')
 
-        # Set the attributes for each TTL output (0-14) and LED
+        # Set the attributes for each TTL output (0-14), PMT input, and LED
 		
+		experiment.setattr_device('pmt0')
+		experiment.setattr_device('pmt1')
 		experiment.setattr_device('ttl0')
 		experiment.setattr_device('ttl1')
 		experiment.setattr_device('ttl2')
@@ -54,6 +56,11 @@ class Board:
 			experiment.ttl13,
 			experiment.ttl14,
 			experiment.ttl15
+		]
+		
+		self.pmt = [
+			experiment.pmt0,
+			experiment.pmt1
 		]
         
 		self.leds = [

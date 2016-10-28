@@ -16,6 +16,7 @@ class InputTest(EnvExperiment):
         # Set the attributes for each TTL output (0-14)
 
         self.setattr_device('ttl0')
+        self.setattr_device('ttl1')
         self.setattr_device('pmt0')
 
     @kernel
@@ -31,19 +32,26 @@ class InputTest(EnvExperiment):
             # Pulse the ttl and read as input
             self.core.break_realtime()
             with parallel:
-                inp.gate_rising(50 * us)
+				
+				# Continuously read for rising inputs
+                inp.gate_rising(10000000 * us)
+				
+				# Create a pulse sequence to read
                 with sequential:
-                    for i in range(11):
+                    for i in range(10000):
+                        if (inp.count() > 0):
+                            print("Passed count threshold")
+                            break
                         delay(2 * us)
                         output.pulse(2 * us)
 						
-			# Prints out the number of rising edges found from the
-			# experiment above
-            print(inp.count())
+				# Continuously monitor for rising edges
+                while True:
+                    pass
+						
         except RTIOUnderflow:
 
             print_underflow()
-
 
 # Alerts that underflow occurred
 
