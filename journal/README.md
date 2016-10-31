@@ -6,6 +6,11 @@
 * Finish initialization and fix bugs with Pipistrello abstraction
 * Create an easy way to setup the environment for ARTIQ and running code (a single executable package, instead of activating the source by hand and opening four separate terminals to run code).
 
+## Mon Oct 31 🎃
+
+* Moved to a 'kernel based' system for responding to input events. Currently, the kernel that gets executed on rising edge detection simply prints to the console, but this week will focus on incorporating more interesting procedures into the abstraction.
+
+
 ## Wed Oct 26
 
 * Succesfully received input in the form of a "rising edge"; the board generates a signal with 10 rising edges from `TTL1`, which is channeled to `PMT0`, which reads the number of rising edges and prints the count. This experiment is located in the repo as `InputTest` in `input-test.py`. We can now use this for, say, detecting a rising edge from a device such as a single photon detector.

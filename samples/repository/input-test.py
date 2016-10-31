@@ -22,37 +22,40 @@ class InputTest(EnvExperiment):
 	@kernel
 	def run(self):
 		self.core.reset()
-		try:
+		#try:
             
-			# Grab and instantiate the relevant inputs and outputs
-			output = self.ttl0
-			inp = self.pmt0
-			inp.input()
+		# Grab and instantiate the relevant inputs and outputs
+		output = self.ttl0
+		inp = self.pmt0
+		inp.input()
 
-            # Pulse the ttl and read as input
-			self.core.break_realtime()
-			with parallel:
-				
-				# Continuously read for rising inputs
-				inp.gate_rising(10000000 * us)
-				
-				# Create a pulse sequence to read
-				with sequential:
-					for i in range(10):
-						delay(2 * us)
-						output.pulse(2 * us)
+		# Pulse the ttl and read as input
+		self.core.break_realtime()
+		with parallel:
+
+			# Continuously read for rising inputs
+			inp.gate_rising(10000000 * us)
+
+			# Create a pulse sequence to read
+			with sequential:
+				for i in range(10):
+					delay(2 * us)
+					output.pulse(2 * us)
+
+			# Continuously monitor for rising edges
+			with sequential:
+				while True:
+					delay(1*us)
+					if (inp.count() > 0):
+						self.response()
+						break
 						
-				# Continuously monitor for rising edges
-				with sequential:
-					while True:
-						if (inp.count() > 0):
-							print("Passed count threshold")
-							for i in range(100000):
-								delay(2 * us)
-								self.ttl1.pulse(2 * us)
-						
-		except RTIOUnderflow:
-			print_underflow()
+		#except RTIOUnderflow:
+			#print_underflow()
+			
+	@kernel
+	def response(self):
+		print("Passed count threshold")
 
 # Alerts that underflow occurred
 
