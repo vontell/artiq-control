@@ -7,7 +7,7 @@
 
 ## Tue Nov 1
 
-* Mde modification to Pipistrello abstraction, by switching over to kernels and adding in handlers for input detection. Timeline issues and testing still has to be addressed.
+* Made modification to Pipistrello abstraction, by switching over to kernels and adding in handlers for input detection. Timeline issues and testing still has to be addressed.
 
 ## Mon Oct 31 🎃
 
