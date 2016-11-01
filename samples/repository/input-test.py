@@ -38,17 +38,15 @@ class InputTest(EnvExperiment):
 
 			# Create a pulse sequence to read
 			with sequential:
+				
 				for i in range(10):
-					delay(2 * us)
-					output.pulse(2 * us)
-
-			# Continuously monitor for rising edges
-			with sequential:
-				while True:
-					delay(1*us)
+					# Continuously monitor for rising edges
 					if (inp.count() > 0):
-						self.response()
 						break
+					delay(20 * us)
+					output.pulse(20 * us)
+					
+				self.response()
 						
 		#except RTIOUnderflow:
 			#print_underflow()
@@ -56,6 +54,10 @@ class InputTest(EnvExperiment):
 	@kernel
 	def response(self):
 		print("Passed count threshold")
+		self.core.break_realtime()
+		for i in range(10000):
+			delay(2 * us)
+			self.ttl1.pulse(2 * us)
 
 # Alerts that underflow occurred
 

@@ -16,7 +16,7 @@ class PipistrelloTest(EnvExperiment):
 	@kernel
 	def run(self):
 		
-		# self.board.reset()
+		self.board.reset()
 		
 		try:
 			

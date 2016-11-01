@@ -72,10 +72,12 @@ class Board:
 		
 	# Resets the board This should be called at the start of every 'run'
 	# command in your experiment
+	@kernel
 	def reset(self):
 		self.get_core().reset()
 	
 	# Flashes LEDs on the board to test the connection
+	@kernel
 	def led_test(self):
 			self.get_core().break_realtime() # TODO: Determine if this is necessary
 			self.leds[0].pulse(250*ms)
@@ -91,7 +93,8 @@ class Board:
 	# Pulses the FPGA on ttl with a period of period. If no length is given,
 	# then the pulse will be continuous. Otherwise, the pulse will occur for
 	# length time
-	def pulse(ttl, period, length=None):
+	@kernel
+	def pulse(self, ttl, period, length=None):
 		half_period = period / float(2)
 		
 		if length is None:
@@ -100,7 +103,39 @@ class Board:
 				self.ttls[ttl].pulse(half_period)
 		else:
 			raise NotImplementedError
-			
+	
+	# Fires a method (handler) when the count of rising edges on a given PMT
+	# input pmt reaches a certain threshold (which defaults to 0). Returns
+	# this board for chaining capabilities
+	#
+	# NOTE: Make sure to call unregister_rising() to reset the PMT once done
+	# 	    This method will call unregister_rising() when the threshold is
+	#		reached, but this event may never occur
+	@kernel
+	def register_rising(self, pmt, handler, threshold=0):
+		
+		# Make sure that this pmt is in input mode (and throws an exception
+		# if this PMT is not input capable)
+		self.pmts[pmt].input()
+		self.pmts[pmt]._set_sensitivity(1) # Starts the counting of rises
+		
+		# Start a loop that uses pmt.count() to determine if the handler
+		# should be fired
+		#
+		# TODO: Obviously a while on a new thread will not work, need to 
+		#       determine the count with FPGA speed, but how?
+		while True:
+			if pmt.count() > threshold:
+				handler()
+				break
+		
+	# Unregisters the given pmt from listening for rising edges by turning
+	# the input off at an unspecified later date
+	@kernel
+	def unregister_rising(self, pmt):
+		self.pmts[pmt]._set_sensitivity(0)
+	
+	
 	# Returns the core device, in situations where granular control is
 	# necessary
 	def get_core(self):

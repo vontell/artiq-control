@@ -2,9 +2,12 @@
 
 ### Tasks
 
-* Checkout datasets and applets within the GUI, following the instructions [here](https://m-labs.hk/artiq/manual-release-2/getting_started_mgmt.html#datasets) (Wed)
 * Finish initialization and fix bugs with Pipistrello abstraction
 * Create an easy way to setup the environment for ARTIQ and running code (a single executable package, instead of activating the source by hand and opening four separate terminals to run code).
+
+## Tue Nov 1
+
+* Mde modification to Pipistrello abstraction, by switching over to kernels and adding in handlers for input detection. Timeline issues and testing still has to be addressed.
 
 ## Mon Oct 31 🎃
 
