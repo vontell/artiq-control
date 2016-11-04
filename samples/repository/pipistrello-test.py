@@ -23,7 +23,7 @@ class PipistrelloTest(EnvExperiment):
 			# flash the board to confirm connection
 			self.board.led_test()
 			# pulse ttl = 0 for T = 4 us
-			# self.board.pulse(0, 4 * us)
+			self.board.pulse(0, 4 * us)
 			
 		except RTIOUnderflow:
 			

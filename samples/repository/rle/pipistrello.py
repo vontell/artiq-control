@@ -99,20 +99,22 @@ class Board:
 		
 		if length is None:
 			while True:
-				self.ttls[ttl].delay(half_period)
 				self.ttls[ttl].pulse(half_period)
+				delay(half_period)
 		else:
-			raise NotImplementedError
+			raise Exception('Not yet implemented!')
 	
 	# Fires a method (handler) when the count of rising edges on a given PMT
 	# input pmt reaches a certain threshold (which defaults to 0). Returns
-	# this board for chaining capabilities
+	# this board for chaining capabilities. Optionally allows for defining
+	# the start time to begin listening (defaults to now), and the amount of
+	# time to listen for (defaults to forever)
 	#
 	# NOTE: Make sure to call unregister_rising() to reset the PMT once done
 	# 	    This method will call unregister_rising() when the threshold is
 	#		reached, but this event may never occur
 	@kernel
-	def register_rising(self, pmt, handler, threshold=0):
+	def register_rising(self, pmt, handler, threshold=0, start=None, length=None):
 		
 		# Make sure that this pmt is in input mode (and throws an exception
 		# if this PMT is not input capable)
