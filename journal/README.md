@@ -5,6 +5,11 @@
 * Finish initialization and fix bugs with Pipistrello abstraction
 * Create an easy way to setup the environment for ARTIQ and running code (a single executable package, instead of activating the source by hand and opening four separate terminals to run code).
 
+## Fri Nov 4
+
+* Fixed bug with `pulse` method within Pipistrello abstraction (works now)
+* Continued work on `rising_edge` functionality in Pipistrello abstraction, following code snippet and suggestions from Robert Jördens.
+
 ## Tue Nov 1
 
 * Made modification to Pipistrello abstraction, by switching over to kernels and adding in handlers for input detection. Timeline issues and testing still has to be addressed.

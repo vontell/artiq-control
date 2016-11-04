@@ -22,9 +22,13 @@ class PipistrelloTest(EnvExperiment):
 			
 			# flash the board to confirm connection
 			self.board.led_test()
-			# pulse ttl = 0 for T = 4 us
+			# pulse ttl = 0 for T = 4 us, and detect the rising edges
 			self.board.pulse(0, 4 * us)
+			self.board.register_rising(0, next_pulse, length=10000 * us)
 			
 		except RTIOUnderflow:
 			
 			print(self.board.get_underflow())
+			
+def next_pulse():
+	print("Detected pulse!")

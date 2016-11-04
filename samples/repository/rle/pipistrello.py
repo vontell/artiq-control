@@ -70,6 +70,10 @@ class Board:
 			experiment.led4
 		]
 		
+		# The minimum latency that we have determined for this board for
+		# reliable placement of events into the timeline
+		self.LATENCY = 2 * us
+		
 	# Resets the board This should be called at the start of every 'run'
 	# command in your experiment
 	@kernel
@@ -114,22 +118,29 @@ class Board:
 	# 	    This method will call unregister_rising() when the threshold is
 	#		reached, but this event may never occur
 	@kernel
-	def register_rising(self, pmt, handler, threshold=0, start=None, length=None):
+	def register_rising(self, pmt, handler, threshold=0, start=0, length=0*us):
 		
 		# Make sure that this pmt is in input mode (and throws an exception
 		# if this PMT is not input capable)
-		self.pmts[pmt].input()
-		self.pmts[pmt]._set_sensitivity(1) # Starts the counting of rises
+		self.pmt[pmt].input()
 		
-		# Start a loop that uses pmt.count() to determine if the handler
-		# should be fired
-		#
-		# TODO: Obviously a while on a new thread will not work, need to 
-		#       determine the count with FPGA speed, but how?
-		while True:
-			if pmt.count() > threshold:
-				handler()
-				break
+		# Set the timeline pointer to start
+		if start == 0:
+			start = now_mu()
+		at_mu(start)
+		
+		# Starting now, begin detecting rising edges for the desired length
+		# (or forever)
+		if length != 0 * us:
+			self.pmt[pmt].gate_rising(length)
+		else:
+			self.pmt[pmt]._set_sensitivity(1)
+			
+		received = self.pmt[pmt].timestamp_mu()
+		
+		if received > 0:  # pulse received during gate
+			at_mu(received + self.LATENCY)
+			handler()
 		
 	# Unregisters the given pmt from listening for rising edges by turning
 	# the input off at an unspecified later date
