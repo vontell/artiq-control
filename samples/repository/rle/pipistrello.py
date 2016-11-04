@@ -138,6 +138,7 @@ class Board:
 	
 	# Returns the core device, in situations where granular control is
 	# necessary
+	@kernel
 	def get_core(self):
 		return self.experiment.core
         
