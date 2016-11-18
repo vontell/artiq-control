@@ -137,6 +137,8 @@ class Board:
 			self.pmt[pmt]._set_sensitivity(1)
 			
 		received = self.pmt[pmt].timestamp_mu()
+        
+        print(received)
 		
 		if received > 0:  # pulse received during gate
 			at_mu(received + self.LATENCY)
