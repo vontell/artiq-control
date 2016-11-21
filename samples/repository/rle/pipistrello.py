@@ -72,7 +72,8 @@ class Board:
 		
 		# The minimum latency that we have determined for this board for
 		# reliable placement of events into the timeline
-		self.LATENCY = 2 * us
+		self.LATENCY = 200
+		self.LATENCY_US = 2 * us
 		
 	# Resets the board This should be called at the start of every 'run'
 	# command in your experiment
@@ -101,6 +102,9 @@ class Board:
 	def pulse(self, ttl, period, length=None):
 		half_period = period / float(2)
 		
+		self.reset()
+		print(now_mu())
+		
 		if length is None:
 			while True:
 				self.ttls[ttl].pulse(half_period)
@@ -128,6 +132,9 @@ class Board:
 		if start == 0:
 			start = now_mu()
 		at_mu(start)
+		delay(self.LATENCY_US)
+		print(start)
+		print(start + self.LATENCY)
 		
 		# Starting now, begin detecting rising edges for the desired length
 		# (or forever)
@@ -137,11 +144,10 @@ class Board:
 			self.pmt[pmt]._set_sensitivity(1)
 			
 		received = self.pmt[pmt].timestamp_mu()
-        
-        print(received)
 		
 		if received > 0:  # pulse received during gate
-			at_mu(received + self.LATENCY)
+			at_mu(received)
+			delay(self.LATENCY_US)
 			handler()
 		
 	# Unregisters the given pmt from listening for rising edges by turning
@@ -160,6 +166,6 @@ class Board:
 	# Returns a string that can be printed when an UnderflowError occurs
 	# These errors occur when you run the board at a speed that is too fast
 	# for instruction timing to keep up.
-	def get_underflow(self):
-		return "UnderflowError on Pipistrello Board (your instructions are beginning to overlap)"
+	def print_underflow(self):
+		print("UnderflowError on Pipistrello Board (your instructions are beginning to overlap)")
 		
