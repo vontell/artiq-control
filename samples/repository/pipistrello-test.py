@@ -18,22 +18,19 @@ class PipistrelloTest(EnvExperiment):
 		
 		self.board.reset()
 		
-		#try:
-			
 		# flash the board to confirm connection
 		self.board.led_test()
-		print("Placed led events")
+		
+		time = now_mu()
 		# pulse ttl = 0 for T = 4 us, and detect the rising edges
-		with parallel:
-			self.board.register_rising(0, next_pulse, length=10000 * us)
-			print("Placed register rising event")
-			self.board.pulse(0, 4 * us)
-			print("Placed pulse event")
-			
-		#except RTIOUnderflow:
-			
-			#print(RTIOUnderflow)
-			#self.board.print_underflow()
+		self.board.pulse(0, 4 * us, 300)
+		
+		at_mu(time)
+		self.board.register_rising(0, next_pulse, length=10000 * us)
+		print("Placed register rising event")
+		
+		#self.board.reset()
+		#
 			
 def next_pulse():
 	print("Detected pulse!")

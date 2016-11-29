@@ -62,6 +62,10 @@ class Board:
 			experiment.pmt0,
 			experiment.pmt1
 		]
+		
+		# Set PMTs to input mode
+		#self.pmt[0].input()
+		#self.pmt[1].input()
         
 		self.leds = [
 			experiment.led1,
@@ -74,7 +78,8 @@ class Board:
 		# reliable placement of events into the timeline
 		self.LATENCY = 200
 		self.LATENCY_US = 2 * us
-		
+	
+	
 	# Resets the board This should be called at the start of every 'run'
 	# command in your experiment
 	@kernel
@@ -84,33 +89,31 @@ class Board:
 	# Flashes LEDs on the board to test the connection
 	@kernel
 	def led_test(self):
-			self.get_core().break_realtime() # TODO: Determine if this is necessary
-			self.leds[0].pulse(250*ms)
-			self.leds[1].pulse(250*ms)
-			self.leds[2].pulse(250*ms)
-			self.leds[3].pulse(250*ms)
-			with parallel:
-				self.leds[0].pulse(500*ms)
-				self.leds[1].pulse(500*ms)
-				self.leds[2].pulse(500*ms)
-				self.leds[3].pulse(500*ms)
+			
+		self.leds[0].pulse(250*ms)
+		self.leds[1].pulse(250*ms)
+		self.leds[2].pulse(250*ms)
+		self.leds[3].pulse(250*ms)
+		with parallel:
+			self.leds[0].pulse(500*ms)
+			self.leds[1].pulse(500*ms)
+			self.leds[2].pulse(500*ms)
+			self.leds[3].pulse(500*ms)
 		
 	# Pulses the FPGA on ttl with a period of period. If no length is given,
 	# then the pulse will be continuous. Otherwise, the pulse will occur for
-	# length time
+	# length iterations
 	@kernel
-	def pulse(self, ttl, period, length=None):
+	def pulse(self, ttl, period, length):
 		half_period = period / float(2)
-		
-		self.reset()
-		print(now_mu())
-		
-		if length is None:
-			while True:
-				self.ttls[ttl].pulse(half_period)
-				delay(half_period)
-		else:
-			raise Exception('Not yet implemented!')
+		print("Pulse starts at " + now_mu())
+		count = 0
+		while count < length:
+			self.ttls[ttl].pulse(half_period)
+			delay(half_period)
+			count += 1
+		print("Pulse end at " + now_mu())
+
 	
 	# Fires a method (handler) when the count of rising edges on a given PMT
 	# input pmt reaches a certain threshold (which defaults to 0). Returns
@@ -124,9 +127,7 @@ class Board:
 	@kernel
 	def register_rising(self, pmt, handler, threshold=0, start=0, length=0*us):
 		
-		# Make sure that this pmt is in input mode (and throws an exception
-		# if this PMT is not input capable)
-		self.pmt[pmt].input()
+		print("Rising edge detect start at " + now_mu())
 		
 		# Set the timeline pointer to start
 		if start == 0:
@@ -143,12 +144,18 @@ class Board:
 		else:
 			self.pmt[pmt]._set_sensitivity(1)
 			
-		received = self.pmt[pmt].timestamp_mu()
-		
-		if received > 0:  # pulse received during gate
-			at_mu(received)
-			delay(self.LATENCY_US)
-			handler()
+		count = 0
+		last = 0
+		while True:
+			last = self.pmt[pmt].timestamp_mu()
+			if last > 0:
+				count += 1
+				if count > threshold:
+					at_mu(last)
+					delay(self.LATENCY_US)
+					handler()
+					break
+			
 		
 	# Unregisters the given pmt from listening for rising edges by turning
 	# the input off at an unspecified later date
