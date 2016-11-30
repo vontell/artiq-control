@@ -85,6 +85,45 @@ class Board:
 	@kernel
 	def reset(self):
 		self.get_core().reset()
+        
+    
+    # Finds the latency associated with placing events into the
+    # timeline for this board. Takes as parameters a `max_value` latency
+    # which is a starting value for the binary search procedure upper bound,
+    # a 'tries' count for the number of tests the board should use
+    # for each latency guess, a `timeout` which is the total
+    # number of guesses that should be made before the binary search
+    # halts, and a `ttl` which is an output that is safe to test on
+    #
+    # SAVES THIS LATENCY IN CLASS VARIABLE `self.latency`
+    @kernel
+    def find_latency(self, max_value, tries, timeout, ttl):
+        
+        total_count = 0
+        min_value = 0
+        
+        # Now find the correct value
+        while total_count < timeout:
+            
+            self.reset() # Reset any timeline configurations
+            guess = (max_value - min_value) / 2
+            test_count = 0
+            while test_count < tries:
+                tries += 1
+                try:
+                    self.ttls[ttl].on()
+                    delay(guess)
+                    self.ttls[ttl].off()
+                except RTIOUnderflow:
+                    min_value = guess
+                    break
+            else:
+                max_value = guess
+            
+            total_count += 1
+            
+        self.latency = max_value
+        return max_value
 	
 	# Flashes LEDs on the board to test the connection
 	@kernel
