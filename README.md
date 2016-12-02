@@ -1,5 +1,7 @@
 # ARTIQ and Qubit Control (NV Centers)
 
+[![Join the chat at https://gitter.im/artiq-control/Lobby](https://badges.gitter.im/artiq-control/Lobby.svg)](https://gitter.im/artiq-control/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This is a compilation of the notes and code from a UROP within the RLE at MIT with the Quantum Photonics Laboratory under Dirk Englund.
 
 ### Project Abstract
