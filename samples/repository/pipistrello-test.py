@@ -22,10 +22,10 @@ class PipistrelloTest(EnvExperiment):
 		self.board.led_test()
         
         # Find the latency of this board
-        latency = self.board.find_latency(2 * us, 30, 20, 0)
-        print(latency)
+		latency = self.board.find_latency(4 * us, 30, 20, 0)
+		print(latency)
 		
-        '''
+		'''
 		time = now_mu()
 		# pulse ttl = 0 for T = 4 us, and detect the rising edges
 		self.board.pulse(0, 4 * us, 300)
@@ -36,7 +36,7 @@ class PipistrelloTest(EnvExperiment):
 		
 		#self.board.reset()
 		#
-        '''
+		'''
 			
 def next_pulse():
 	print("Detected pulse!")

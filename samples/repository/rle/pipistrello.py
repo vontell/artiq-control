@@ -4,6 +4,7 @@
 # Date: October 21, 2016
 
 from artiq.experiment import *
+import numpy as np
 
 class Board:
 	
@@ -76,7 +77,7 @@ class Board:
 		
 		# The minimum latency that we have determined for this board for
 		# reliable placement of events into the timeline
-		self.LATENCY = 200
+		self.LATENCY = 2 * us
 		self.LATENCY_US = 2 * us
 	
 	
@@ -96,34 +97,42 @@ class Board:
     # halts, and a `ttl` which is an output that is safe to test on
     #
     # SAVES THIS LATENCY IN CLASS VARIABLE `self.latency`
-    @kernel
-    def find_latency(self, max_value, tries, timeout, ttl):
+	@kernel
+	def find_latency(self, max_value, tries, timeout, ttl):
+		
+		total_count = 0
+		min_value = 0.0
         
-        total_count = 0
-        min_value = 0
-        
-        # Now find the correct value
-        while total_count < timeout:
+		# Now find the correct value
+		while total_count < timeout:
             
-            self.reset() # Reset any timeline configurations
-            guess = (max_value - min_value) / 2
-            test_count = 0
-            while test_count < tries:
-                tries += 1
-                try:
-                    self.ttls[ttl].on()
-                    delay(guess)
-                    self.ttls[ttl].off()
-                except RTIOUnderflow:
-                    min_value = guess
-                    break
-            else:
-                max_value = guess
+			self.reset() # Reset any timeline configurations
+			guess = (max_value - min_value)/ 2.0
+			print("Trying with guess")
+			print(guess)
+			test_count = 0
+			while test_count < tries:
+				tries += 1
+				#try:
+				#self.ttls[ttl].on()
+				#delay(guess)
+				#self.ttls[ttl].off()
+				delay(guess)
+				self.ttls[ttl].pulse(guess)
+				#except RTIOUnderflow:
+				print("Failed with guess below")
+				print(guess)
+				min_value = guess
+				break
+			else:
+				print("Succeeded with guess below")
+				print(guess)
+				max_value = guess
             
-            total_count += 1
-            
-        self.latency = max_value
-        return max_value
+			total_count += 1
+			
+		self.LATENCY = max_value
+		return max_value
 	
 	# Flashes LEDs on the board to test the connection
 	@kernel
