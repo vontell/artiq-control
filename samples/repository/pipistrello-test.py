@@ -22,21 +22,17 @@ class PipistrelloTest(EnvExperiment):
 		self.board.led_test()
         
         # Find the latency of this board
-		latency = self.board.find_latency(4 * ms, 30, 20, 0)
+		latency = self.board.find_latency(4 * us, 30, 50, 0)
 		print(latency)
 		
-		'''
-		time = now_mu()
-		# pulse ttl = 0 for T = 4 us, and detect the rising edges
-		self.board.pulse(0, 4 * us, 300)
+		self.board.get_core().break_realtime()
+		print("Before delay: ", now_mu())
+		delay(1*s)
+		print("Starting pulse")
+		# pulse ttl = 0 for T = 4 us
+		self.board.pulse(0, 2 * latency, 20)
 		
-		at_mu(time)
-		self.board.register_rising(0, next_pulse, length=10000 * us)
-		print("Placed register rising event")
-		
-		#self.board.reset()
-		#
-		'''
+		print("Pulses placed. Done!")
 			
 def next_pulse():
 	print("Detected pulse!")

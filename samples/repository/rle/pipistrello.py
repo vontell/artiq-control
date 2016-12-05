@@ -105,28 +105,27 @@ class Board:
         
 		# Now find the correct value
 		while total_count < timeout:
-            
-			#self.reset() # Reset any timeline configurations
-			self.experiment.core.reset()
-			self.experiment.core.break_realtime()
-			guess = (max_value - min_value)/ 2.0
-			print("Trying with guess")
-			print(guess)
+			
+			print("Total count: ", total_count)
+			self.reset() # Reset any timeline configurations
+			delay(1*s)
+			guess = (max_value - min_value)/ 2.0 + min_value
+			print("Trying with guess: ", guess)
 			test_count = 0
+			print("[" , min_value , ",", max_value, "]")
 			while test_count < tries:
-				print(test_count)
 				test_count += 1
-				#try:
-				#self.ttls[ttl].on()
-				#delay(guess)
-				#self.ttls[ttl].off()
-				delay(guess)
-				self.leds[0].pulse(guess)
-				#except RTIOUnderflow:
-				print("Failed with guess below")
-				print(guess)
-				min_value = guess
-				break
+				try:
+					delay(guess)
+					self.ttls[ttl].pulse(guess)
+				except RTIOUnderflow:
+					print("Failed with guess: ", guess)
+					min_value = guess
+					break
+				except RTIOCollision:
+					print("Failed with guess: ", guess)
+					min_value = guess
+					break
 			else:
 				print("Succeeded with guess below")
 				print(guess)
@@ -157,13 +156,13 @@ class Board:
 	@kernel
 	def pulse(self, ttl, period, length):
 		half_period = period / float(2)
-		print("Pulse starts at " + now_mu())
+		print("Pulse starts at ", now_mu())
 		count = 0
 		while count < length:
 			self.ttls[ttl].pulse(half_period)
 			delay(half_period)
 			count += 1
-		print("Pulse end at " + now_mu())
+		print("Pulse end at ", now_mu())
 
 	
 	# Fires a method (handler) when the count of rising edges on a given PMT
@@ -184,7 +183,7 @@ class Board:
 		if start == 0:
 			start = now_mu()
 		at_mu(start)
-		delay(self.LATENCY_US)
+		delay(self.LATENCY)
 		print(start)
 		print(start + self.LATENCY)
 		
