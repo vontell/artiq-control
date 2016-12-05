@@ -5,6 +5,10 @@
 * Finish initialization and fix bugs with Pipistrello abstraction
 * Create an easy way to setup the environment for ARTIQ and running code (a single executable package, instead of activating the source by hand and opening four separate terminals to run code).
 
+## Mon Dec 5
+
+* Completed latency finding within Pipistrello abstraction (after testing, it seems to be pretty accurate, within half of a nanosecond)
+
 ## Fri Nov 4
 
 * Fixed bug with `pulse` method within Pipistrello abstraction (works now)
