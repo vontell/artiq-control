@@ -106,19 +106,22 @@ class Board:
 		# Now find the correct value
 		while total_count < timeout:
             
-			self.reset() # Reset any timeline configurations
+			#self.reset() # Reset any timeline configurations
+			self.experiment.core.reset()
+			self.experiment.core.break_realtime()
 			guess = (max_value - min_value)/ 2.0
 			print("Trying with guess")
 			print(guess)
 			test_count = 0
 			while test_count < tries:
-				tries += 1
+				print(test_count)
+				test_count += 1
 				#try:
 				#self.ttls[ttl].on()
 				#delay(guess)
 				#self.ttls[ttl].off()
 				delay(guess)
-				self.ttls[ttl].pulse(guess)
+				self.leds[0].pulse(guess)
 				#except RTIOUnderflow:
 				print("Failed with guess below")
 				print(guess)

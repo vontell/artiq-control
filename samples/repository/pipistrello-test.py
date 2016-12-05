@@ -22,7 +22,7 @@ class PipistrelloTest(EnvExperiment):
 		self.board.led_test()
         
         # Find the latency of this board
-		latency = self.board.find_latency(4 * us, 30, 20, 0)
+		latency = self.board.find_latency(4 * ms, 30, 20, 0)
 		print(latency)
 		
 		'''
