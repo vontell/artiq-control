@@ -5,6 +5,10 @@
 * Finish initialization and fix bugs with Pipistrello abstraction
 * Create an easy way to setup the environment for ARTIQ and running code (a single executable package, instead of activating the source by hand and opening four separate terminals to run code).
 
+## Tue Dec 6
+
+* Board can receive input signals and respond to them by placing new pulse sequences into the timeline, by using long delays (on the order of 1 second).
+
 ## Mon Dec 5
 
 * Completed latency finding within Pipistrello abstraction (after testing, it seems to be pretty accurate, within half of a nanosecond)
