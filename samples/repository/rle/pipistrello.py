@@ -175,24 +175,13 @@ class Board:
 	# 	    This method will call unregister_rising() when the threshold is
 	#		reached, but this event may never occur
 	@kernel
-	def register_rising(self, pmt, handler, threshold=0, start=0, length=0*us):
-		
-		print("Rising edge detect start at " + now_mu())
+	def register_rising(self, pmt, handler, start, threshold=0):
 		
 		# Set the timeline pointer to start
-		if start == 0:
-			start = now_mu()
 		at_mu(start)
-		delay(self.LATENCY)
-		print(start)
-		print(start + self.LATENCY)
 		
-		# Starting now, begin detecting rising edges for the desired length
-		# (or forever)
-		if length != 0 * us:
-			self.pmt[pmt].gate_rising(length)
-		else:
-			self.pmt[pmt]._set_sensitivity(1)
+		# Starting now, begin detecting rising edges
+        self.pmt[pmt]._set_sensitivity(1)
 			
 		count = 0
 		last = 0
@@ -202,7 +191,7 @@ class Board:
 				count += 1
 				if count > threshold:
 					at_mu(last)
-					delay(self.LATENCY_US)
+					delay(self.LATENCY)
 					handler()
 					break
 			
