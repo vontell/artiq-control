@@ -181,7 +181,7 @@ class Board:
 		at_mu(start)
 		
 		# Starting now, begin detecting rising edges
-        self.pmt[pmt]._set_sensitivity(1)
+		self.pmt[pmt]._set_sensitivity(1)
 			
 		count = 0
 		last = 0
