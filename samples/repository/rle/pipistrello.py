@@ -198,10 +198,11 @@ class Board:
 			
 		
 	# Unregisters the given pmt from listening for rising edges by turning
-	# the input off at an unspecified later date
+	# the input off at an unspecified later date. Must be provided a time
+	# for when it should turn off this pmt
 	@kernel
-	def unregister_rising(self, pmt):
-		self.pmts[pmt]._set_sensitivity(0)
+	def unregister_rising(self, pmt, start):
+		self.pmt[pmt]._set_sensitivity(0)
 	
 	
 	# Returns the core device, in situations where granular control is
