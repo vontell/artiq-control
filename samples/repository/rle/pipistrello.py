@@ -106,29 +106,29 @@ class Board:
 		# Now find the correct value
 		while total_count < timeout:
 			
-			print("Total count: ", total_count)
+			#print("Total count: ", total_count)
 			self.reset() # Reset any timeline configurations
 			delay(1*s)
 			guess = (max_value - min_value)/ 2.0 + min_value
-			print("Trying with guess: ", guess)
+			#print("Trying with guess: ", guess)
 			test_count = 0
-			print("[" , min_value , ",", max_value, "]")
+			#print("[" , min_value , ",", max_value, "]")
 			while test_count < tries:
 				test_count += 1
 				try:
 					delay(guess)
 					self.ttls[ttl].pulse(guess)
 				except RTIOUnderflow:
-					print("Failed with guess: ", guess)
+					#print("Failed with guess: ", guess)
 					min_value = guess
 					break
 				except RTIOCollision:
-					print("Failed with guess: ", guess)
+					#print("Failed with guess: ", guess)
 					min_value = guess
 					break
 			else:
-				print("Succeeded with guess below")
-				print(guess)
+				#print("Succeeded with guess below")
+				#print(guess)
 				max_value = guess
             
 			total_count += 1
@@ -189,10 +189,11 @@ class Board:
 			last = self.pmt[pmt].timestamp_mu()
 			if last > 0:
 				count += 1
+				print("Rising edge at ", last)
 				if count > threshold:
 					at_mu(last)
 					delay(self.LATENCY)
-					handler()
+					handler(self, now_mu())
 					break
 			
 		

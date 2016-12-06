@@ -39,7 +39,15 @@ class PipistrelloTest(EnvExperiment):
         
 		# Start listening for rising edge events
 		print("Register rising edge event")
-		self.board.register_rising(0, next_pulse, START)
-			
-def next_pulse():
-	print("Detected pulse!")
+		self.board.register_rising(0, next_pulse, START, threshold=5)
+		
+@kernel			
+def next_pulse(board, start):
+	
+	print("Starting new pulse")
+	
+	at_mu(start)
+	delay(1*s)
+	board.pulse(1, 4 * us, 2000)
+	
+	print("Finished new pulse placement")
