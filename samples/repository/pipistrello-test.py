@@ -41,6 +41,10 @@ class PipistrelloTest(EnvExperiment):
 		print("Register rising edge event")
 		self.board.register_rising(0, next_pulse, START, threshold=5)
 		
+		# Make sure to stop the listener
+		self.board.unregister_rising(0)
+		print("Terminated rising edge listener")
+		
 @kernel			
 def next_pulse(board, start):
 	
