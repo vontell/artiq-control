@@ -201,7 +201,7 @@ class Board:
 	# reached (this handler should take two parameters, this board and a list of timestamps),
 	# and the start and end time (in machine units) to listen for events.
 	@kernel
-	def get_echo(self, detector, handler, start, end, threshold=0):
+	def get_echo(self, detector, handler, start, end):
 		
 		# Set the timeline pointer to start
 		at_mu(start)
