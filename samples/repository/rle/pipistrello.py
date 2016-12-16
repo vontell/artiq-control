@@ -8,9 +8,11 @@ import numpy as np
 
 class Board:
 	
-	# Creates a Pipistrello board, where experiment is the class that will
-	# provide context for the board.
 	def __init__(self, experiment):
+        '''
+        Creates a Pipistrello board, where experiment is the class that will
+        provide context for the board.
+        '''
 		
 		self.experiment = experiment
 		experiment.setattr_device('core')
@@ -77,25 +79,29 @@ class Board:
 		self.LATENCY = 2 * us
 	
 	
-	# Resets the board This should be called at the start of every 'run'
-	# command in your experiment
 	@kernel
 	def reset(self):
+        '''
+        Resets the board This should be called at the start of every 'run'
+        command in your experiment
+        '''
 		self.get_core().reset()
         
-    
-    # Finds the latency associated with placing events into the
-    # timeline for this board. Takes as parameters a `max_value` latency
-    # which is a starting value for the binary search procedure upper bound,
-    # a 'tries' count for the number of tests the board should use
-    # for each latency guess, a `timeout` which is the total
-    # number of guesses that should be made before the binary search
-    # halts, and a `ttl` which is an output that is safe to test on
-    #
-    # SAVES THIS LATENCY IN CLASS VARIABLE `self.latency`
+        
 	@kernel
 	def find_latency(self, max_value, tries, timeout, ttl):
-		
+		'''
+        Finds the latency associated with placing events into the
+        timeline for this board. Takes as parameters a `max_value` latency
+        which is a starting value for the binary search procedure upper bound,
+        a 'tries' count for the number of tests the board should use
+        for each latency guess, a `timeout` which is the total
+        number of guesses that should be made before the binary search
+        halts, and a `ttl` which is an output that is safe to test on
+        
+        SAVES THIS LATENCY IN CLASS VARIABLE `self.LATENCY`
+        '''
+        
 		total_count = 0
 		min_value = 0.0
         
@@ -132,9 +138,10 @@ class Board:
 		self.LATENCY = max_value
 		return max_value
 	
-	# Flashes LEDs on the board to test the connection
+    
 	@kernel
 	def led_test(self):
+        '''Flashes LEDs on the board to test the connection'''
 			
 		self.leds[0].pulse(250*ms)
 		self.leds[1].pulse(250*ms)
@@ -146,11 +153,14 @@ class Board:
 			self.leds[2].pulse(500*ms)
 			self.leds[3].pulse(500*ms)
 		
-	# Pulses the FPGA on ttl with a period of period. If no length is given,
-	# then the pulse will be continuous. Otherwise, the pulse will occur for
-	# length iterations
 	@kernel
 	def pulse(self, ttl, period, length):
+        '''
+        Pulses the FPGA on ttl with a period of period. If no length is given,
+        then the pulse will be continuous. Otherwise, the pulse will occur for
+        length iterations
+        '''
+        
 		half_period = period / float(2)
 		print("Pulse starts at ", now_mu())
 		count = 0
@@ -161,17 +171,19 @@ class Board:
 		print("Pulse end at ", now_mu())
 
 	
-	# Fires a method (handler) when the count of rising edges on a given
-	# input detector reaches a certain threshold (which defaults to 0). Returns
-	# this board for chaining capabilities. Optionally allows for defining
-	# the start time to begin listening (defaults to now), and the amount of
-	# time to listen for (defaults to forever)
-	#
-	# NOTE: Make sure to call unregister_rising() to reset the detector once done
-	# 	    This method will call unregister_rising() when the threshold is
-	#		reached, but this event may never occur
 	@kernel
 	def register_rising(self, detector, handler, start, threshold=0):
+        '''
+        Fires a method (handler) when the count of rising edges on a given
+        input detector reaches a certain threshold (which defaults to 0). Returns
+        this board for chaining capabilities. Optionally allows for defining
+        the start time to begin listening (defaults to now), and the amount of
+        time to listen for (defaults to forever)
+        
+        NOTE: Make sure to call unregister_rising() to reset the detector once done
+              This method will call unregister_rising() when the threshold is
+              reached, but this event may never occur
+        '''
 		
 		# Set the timeline pointer to start
 		at_mu(start)
@@ -192,16 +204,19 @@ class Board:
 					handler(self, now_mu())
 					break
 			
-	# Grabs timestamps of falling and rising edges on an input channel,
-	# and returns them as a list such that an output can echo the input
-	# sequence. Note that due to the list operations, this method will finish
-	# executing long after the input signal has finished.
-	#
-	# Takes as parameters the input detector, the method to call once threshold is
-	# reached (this handler should take two parameters, this board and a list of timestamps),
-	# and the start and end time (in machine units) to listen for events.
+
 	@kernel
 	def get_echo(self, detector, handler, start, end):
+        '''
+        Grabs timestamps of falling and rising edges on an input channel,
+        and returns them as a list such that an output can echo the input
+        sequence. Note that due to the list operations, this method will finish
+        executing long after the input signal has finished.
+        
+        Takes as parameters the input detector, the method to call once threshold is
+        reached (this handler should take two parameters, this board and a list of timestamps),
+        and the start and end time (in machine units) to listen for events.
+        '''
 		
 		# Set the timeline pointer to start
 		at_mu(start)
@@ -229,22 +244,33 @@ class Board:
 			if last > 0:
 				timestamps.append(last)
 	
-	# Unregisters the given detector from listening for rising edges by turning
-	# the input off at an unspecified later date. Must be provided a time
-	# for when it should turn off this pmt
+    
 	@kernel
 	def unregister_rising(self, detector, start):
+        '''
+        Unregisters the given detector from listening for rising edges by turning
+        the input off at an unspecified later date. Must be provided a time
+        for when it should turn off this pmt
+        '''
+        
 		self.pmt[detector]._set_sensitivity(0)
 	
-	# Returns the core device, in situations where granular control is
-	# necessary
+    
 	@kernel
 	def get_core(self):
+        '''
+        Returns the core device, in situations where granular control is
+        necessary
+        '''
+        
 		return self.experiment.core
         
-	# Returns a string that can be printed when an UnderflowError occurs
-	# These errors occur when you run the board at a speed that is too fast
-	# for instruction timing to keep up.
+        
 	def print_underflow(self):
+        '''
+        Returns a string that can be printed when an UnderflowError occurs
+        These errors occur when you run the board at a speed that is too fast
+        for instruction timing to keep up.
+        '''
+        
 		print("UnderflowError on Pipistrello Board (your instructions are beginning to overlap)")
-		
