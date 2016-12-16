@@ -63,10 +63,6 @@ class Board:
 			experiment.pmt0,
 			experiment.pmt1
 		]
-		
-		# Set PMTs to input mode
-		#self.pmt[0].input()
-		#self.pmt[1].input()
         
 		self.leds = [
 			experiment.led1,
@@ -77,8 +73,8 @@ class Board:
 		
 		# The minimum latency that we have determined for this board for
 		# reliable placement of events into the timeline
+        # Set to a default of 2 microseconds
 		self.LATENCY = 2 * us
-		self.LATENCY_US = 2 * us
 	
 	
 	# Resets the board This should be called at the start of every 'run'
@@ -165,28 +161,28 @@ class Board:
 		print("Pulse end at ", now_mu())
 
 	
-	# Fires a method (handler) when the count of rising edges on a given PMT
-	# input pmt reaches a certain threshold (which defaults to 0). Returns
+	# Fires a method (handler) when the count of rising edges on a given
+	# input detector reaches a certain threshold (which defaults to 0). Returns
 	# this board for chaining capabilities. Optionally allows for defining
 	# the start time to begin listening (defaults to now), and the amount of
 	# time to listen for (defaults to forever)
 	#
-	# NOTE: Make sure to call unregister_rising() to reset the PMT once done
+	# NOTE: Make sure to call unregister_rising() to reset the detector once done
 	# 	    This method will call unregister_rising() when the threshold is
 	#		reached, but this event may never occur
 	@kernel
-	def register_rising(self, pmt, handler, start, threshold=0):
+	def register_rising(self, detector, handler, start, threshold=0):
 		
 		# Set the timeline pointer to start
 		at_mu(start)
 		
 		# Starting now, begin detecting rising edges
-		self.pmt[pmt]._set_sensitivity(1)
+		self.pmt[detector]._set_sensitivity(1)
 			
 		count = 0
 		last = 0
 		while True:
-			last = self.pmt[pmt].timestamp_mu()
+			last = self.pmt[detector].timestamp_mu()
 			if last > 0:
 				count += 1
 				print("Rising edge at ", last)
@@ -196,14 +192,49 @@ class Board:
 					handler(self, now_mu())
 					break
 			
+	# Grabs timestamps of falling and rising edges on an input channel,
+	# and returns them as a list such that an output can echo the input
+	# sequence. Note that due to the list operations, this method will finish
+	# executing long after the input signal has finished.
+	#
+	# Takes as parameters the input detector, the method to call once threshold is
+	# reached (this handler should take two parameters, this board and a list of timestamps),
+	# and the start and end time (in machine units) to listen for events.
+	@kernel
+	def get_echo(self, detector, handler, start, end, threshold=0):
 		
-	# Unregisters the given pmt from listening for rising edges by turning
+		# Set the timeline pointer to start
+		at_mu(start)
+		
+		# Starting now, begin detecting all edges
+		self.pmt[detector]._set_sensitivity(3)
+		
+		# End the listening
+		at_mu(end)
+		self.pmt[detector]._set_sensitivity(0)
+		
+		# List of timestamps
+		timestamps = []
+		
+		while True:
+			# If we are past the end listening time, then exit
+			if self.experiment.core.get_rtio_counter_mu() > end:
+				at_mu(end)
+				delay(1 * s) #TODO: Not a good delay!
+				handler(self, timestamps)
+				break
+				
+			# Otherwise, check if there is a new timestamp
+			last = self.pmt[detector].timestamp_mu()
+			if last > 0:
+				timestamps.append(last)
+	
+	# Unregisters the given detector from listening for rising edges by turning
 	# the input off at an unspecified later date. Must be provided a time
 	# for when it should turn off this pmt
 	@kernel
-	def unregister_rising(self, pmt, start):
-		self.pmt[pmt]._set_sensitivity(0)
-	
+	def unregister_rising(self, detector, start):
+		self.pmt[detector]._set_sensitivity(0)
 	
 	# Returns the core device, in situations where granular control is
 	# necessary
