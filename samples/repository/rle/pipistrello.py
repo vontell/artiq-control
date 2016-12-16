@@ -90,7 +90,7 @@ class Board:
         
 	@kernel
 	def find_latency(self, max_value, tries, timeout, ttl):
-		'''
+	'''
         Finds the latency associated with placing events into the
         timeline for this board. Takes as parameters a `max_value` latency
         which is a starting value for the binary search procedure upper bound,
