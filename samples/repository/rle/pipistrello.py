@@ -3,8 +3,8 @@
 # Author: Aaron Vontell
 # Date: October 21, 2016
 
-from artiq.experiment import *
-import numpy as np
+from artiq.experiment import Experiment, kernel, us
+from array import array
 
 class Board:
 	
@@ -174,7 +174,7 @@ class Board:
 		self.ttls[ttl].pulse(length)
 	
 	@kernel
-	def register_rising(self, detector, handler, start, threshold=0):
+	def register_rising(self, detector, handler, start, window, threshold=0):
 		'''
 		Fires a method (handler) when the count of rising edges on a given
  		input detector reaches a certain threshold (which defaults to 0). Returns this board for chaining capabilities. Optionally allows for defining
@@ -192,17 +192,19 @@ class Board:
 		# Starting now, begin detecting rising edges
 		self.pmt[detector]._set_sensitivity(1)
 			
-		count = 0
 		last = 0
+		stamps = array()
 		while True:
 			last = self.pmt[detector].timestamp_mu()
 			if last > 0:
-				count += 1
-				#print("Rising edge at ", last)
-				if count >= threshold:
-					at_mu(last)
-					handler(self, now_mu())
-					break
+				stamps.append(last)
+				if stamps.length >= threshold:
+					if(stamps[stamps.length - 1] - stamps[0] < window):
+						at_mu(last)
+						handler(self, now_mu(), start)
+						break
+					else:
+						stamps.pop(0)
 			
 
 	@kernel
