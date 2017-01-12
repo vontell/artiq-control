@@ -54,14 +54,29 @@ def next_pulse(board, start):
 	#print("Starting new pulse")
 	
 	#at_mu(start)
-	delay(30*us)
+	delay(15*us) #30
 	
-	# THIS IS WHERE THE ERROR OCCURS
-	board.ttls[1].pulse(10*ns)
-	delay(10*ns)
-	board.ttls[1].pulse(10*ns)
-	delay(10*ns)
-	board.ttls[1].pulse(10*ns)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
 
 	print("Finished new pulse placement")
 	
