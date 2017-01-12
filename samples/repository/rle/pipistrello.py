@@ -165,7 +165,12 @@ class Board:
 			delay(half_period)
 			count += 1
 		print("Pulse end at ", now_mu())
-
+		
+	def pulseDC(self, ttl, length):
+		'''
+		Turns on the given ttl for a length of length
+		'''
+		self.ttls[ttl].pulse(length)
 	
 	@kernel
 	def register_rising(self, detector, handler, start, threshold=0):
@@ -196,6 +201,7 @@ class Board:
 				if count > threshold:
 					at_mu(last)
 					delay(self.LATENCY)
+					print("Start handler")
 					handler(self, now_mu())
 					break
 			

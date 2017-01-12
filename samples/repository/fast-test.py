@@ -1,10 +1,9 @@
 # An experiment that tests the Pipistrello abstraction
 # Author: Aaron Vontell
-# Date: October 21, 2016
+# Date: January 11, 2017
 
 from artiq.experiment import *
 from rle.pipistrello import Board
-
 
 class PipistrelloTest(EnvExperiment):
 
@@ -22,29 +21,33 @@ class PipistrelloTest(EnvExperiment):
 		self.board.led_test()
         
         # Find the latency of this board
+		# (Minimum delay needed between instructions)
+		# TODO Why does 64 not work? Seems to be a buffer issue...
 		print("Finding board latency...")
 		latency = self.board.find_latency(4 * us, 63, 50, 2)
 		print("Found latency: ", latency, " sec")
 		
-		# Start the pulse sequence
+		# Start the pulse
 		self.board.get_core().break_realtime()
+		
+		# Delaying to make sure we don't get initial RTIO Underflow Errors
 		print("Before delay of 2 seconds: ", now_mu())
 		delay(2*s)
 		START = now_mu()
 		print("Start time: ", START)
 		print("Starting pulse")
-		# pulse ttl = 0 for T = 4 us
+		# pulse ttl = 0 with a square wave of T = 4 us, and 20 oscillations
 		self.board.pulse(0, 4 * us, 20)
 		print("Pulses placed. Done!")
         
 		# Start listening for rising edge events
 		print("Register rising edge event")
+		
+		# next_pulse will be given self.board and the timestamp
+		# of the last rising edge. An additional delay of `latency`
+		# will also be inserted before calling next_pulse
 		self.board.register_rising(0, next_pulse, START, threshold=5)
-		
-		# Make sure to stop the listener
-		#self.board.unregister_rising(0)
-		#print("Terminated rising edge listener")
-		
+
 @kernel			
 def next_pulse(board, start):
 	
@@ -52,6 +55,9 @@ def next_pulse(board, start):
 	
 	at_mu(start)
 	delay(1*s)
-	board.pulse(1, 4 * us, 2000)
+	
+	# THIS IS WHERE THE ERROR OCCURS
+	board.pulseDC(0, 1*s)
 	
 	print("Finished new pulse placement")
+	
