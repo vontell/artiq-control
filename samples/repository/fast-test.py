@@ -46,7 +46,7 @@ class PipistrelloTest(EnvExperiment):
 		# next_pulse will be given self.board and the timestamp
 		# of the last rising edge. An additional delay of `latency`
 		# will also be inserted before calling next_pulse
-		self.board.register_rising(0, next_pulse, START, threshold=5)
+		self.board.register_rising(0, next_pulse, START, threshold=3)
 
 @kernel			
 def next_pulse(board, start):
@@ -54,10 +54,29 @@ def next_pulse(board, start):
 	#print("Starting new pulse")
 	
 	#at_mu(start)
-	delay(14*us)
+	delay(15*us) #30
 	
-	# THIS IS WHERE THE ERROR OCCURS
-	board.ttls[1].pulse(1*ns)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
+	delay(5* us)
+	board.ttls[1].pulse(5 * us)
 
 	print("Finished new pulse placement")
 	
