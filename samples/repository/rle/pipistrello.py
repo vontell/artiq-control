@@ -199,7 +199,7 @@ class Board:
 			if last > 0:
 				count += 1
 				#print("Rising edge at ", last)
-				if count > threshold:
+				if count >= threshold:
 					at_mu(last)
 					handler(self, now_mu())
 					break
