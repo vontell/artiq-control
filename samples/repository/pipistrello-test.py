@@ -44,14 +44,13 @@ class PipistrelloTest(EnvExperiment):
 		# Make sure to stop the listener
 		#self.board.unregister_rising(0)
 		#print("Terminated rising edge listener")
-		
-@kernel			
+
+@kernel
 def next_pulse(board, start):
 	
-	print("Starting new pulse")
-	
 	at_mu(start)
-	delay(1*s)
-	board.pulse(1, 4 * us, 2000)
+	#delay(1*s)
+	delay(8*ns)
+	board.ttls[1].pulse(5*ns)
 	
-	print("Finished new pulse placement")
+	print("Finished new pulse placement: ", now_mu())

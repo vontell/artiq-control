@@ -23,9 +23,9 @@ class PipistrelloTest(EnvExperiment):
         # Find the latency of this board
 		# (Minimum delay needed between instructions)
 		# TODO Why does 64 not work? Seems to be a buffer issue...
-		print("Finding board latency...")
-		latency = self.board.find_latency(4 * us, 63, 50, 2)
-		print("Found latency: ", latency, " sec")
+		#print("Finding board latency...")
+		#latency = self.board.find_latency(4 * us, 63, 50, 2)
+		#print("Found latency: ", latency, " sec")
 		
 		# Start the pulse
 		self.board.get_core().break_realtime()
@@ -51,13 +51,13 @@ class PipistrelloTest(EnvExperiment):
 @kernel			
 def next_pulse(board, start):
 	
-	print("Starting new pulse")
+	#print("Starting new pulse")
 	
-	at_mu(start)
-	delay(1*s)
+	#at_mu(start)
+	delay(14*us)
 	
 	# THIS IS WHERE THE ERROR OCCURS
-	board.pulseDC(0, 1*s)
-	
+	board.ttls[1].pulse(1*ns)
+
 	print("Finished new pulse placement")
 	

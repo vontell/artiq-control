@@ -166,6 +166,7 @@ class Board:
 			count += 1
 		print("Pulse end at ", now_mu())
 		
+	@kernel
 	def pulseDC(self, ttl, length):
 		'''
 		Turns on the given ttl for a length of length
@@ -197,11 +198,9 @@ class Board:
 			last = self.pmt[detector].timestamp_mu()
 			if last > 0:
 				count += 1
-				print("Rising edge at ", last)
+				#print("Rising edge at ", last)
 				if count > threshold:
 					at_mu(last)
-					delay(self.LATENCY)
-					print("Start handler")
 					handler(self, now_mu())
 					break
 			
