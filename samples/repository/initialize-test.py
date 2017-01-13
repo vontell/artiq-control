@@ -6,6 +6,7 @@
 
 from artiq.experiment import *
 from rle.pipistrello import Board
+from rle.rabi import RabiExperiment
 
 class CounterTest(EnvExperiment):
 
@@ -17,8 +18,8 @@ class CounterTest(EnvExperiment):
 	@kernel
 	def run(self):
 		
-		def window_fn(n):
-			pass
+		def window_fn(n: int) -> float:
+			return 10*us
 		
 		photon_counts = range(0, 10)
 		laser_port = 0
@@ -26,9 +27,10 @@ class CounterTest(EnvExperiment):
 		verbose = True
 		
 		rabi = RabiExperiment(self.board)
+		print(rabi)
 		
 		#windows = rabi.get_photon_windows()
-		init_times = rabi.get_time_to_detect(laser_port, apd_port, photon_counts, window_fn, verbose)
+		#init_times = rabi.get_time_to_detect(laser_port, apd_port, photon_counts, window_fn, verbose)
 		
 		print("Finished NV center initialization analysis")
-		print("Initialization time results: ", init_times)
+		#print("Initialization time results: ", init_times)

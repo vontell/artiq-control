@@ -10,7 +10,7 @@ class RabiExperiment:
 		self.board = board
 		
 	@kernel
-	def get_time_to_detect(laser_port, apd_port, photon_counts, window_fn, verbose):
+	def get_time_to_detect(self, laser_port, apd_port, photon_counts, window_fn, verbose):
 		
 		print("Beginning initialization wait analysis")
 		
