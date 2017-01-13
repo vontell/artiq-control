@@ -201,7 +201,7 @@ class Board:
 				if stamps.length >= threshold:
 					if(stamps[stamps.length - 1] - stamps[0] < window):
 						at_mu(last)
-						handler(self, now_mu(), start)
+						handler(self, start, last)
 						break
 					else:
 						stamps.pop(0)
