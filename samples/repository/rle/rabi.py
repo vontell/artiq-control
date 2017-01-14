@@ -10,11 +10,20 @@ class RabiExperiment:
 		self.board = board
 		
 	@kernel
-	def get_time_to_detect(self, laser_port, apd_port, photon_counts, window_fn, verbose):
+	def get_photon_windows(self, laser_port, apd_port, photon_counts, timeout_fn, verbose):
+		
+		print("Beginning initialization window analysis")
+		
+		# Dictionary for recording the window times
+		results = {}
+		
+		
+	@kernel
+	def get_time_to_detect(self, laser_port, apd_port, photon_counts, windows, verbose):
 		
 		print("Beginning initialization wait analysis")
 		
-		# Function for recording the initialization times
+		# Dictionary for recording the initialization times
 		results = {}
 		def record(board, start, last):
 
@@ -30,7 +39,7 @@ class RabiExperiment:
 			if verbose: print("Beginning test to detect ", n , " photons")
 			
 			# Calculate threshold window before dealing with the timeline
-			window = window_fn(n)
+			window = windows[n]
 		
 			# Reset the board and timeline, delaying to avoid RTIOUnderflow Errors
 			self.board.reset()
