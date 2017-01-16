@@ -1,7 +1,8 @@
 # Configurable tests and experiments for Rabi oscillations
 # in Nitrogen Vacancy Centers. 
 
-from artiq.experiment import Experiment, kernel, us
+from artiq.experiment import kernel, s
+from addict import Dict
 
 class RabiExperiment:
   
@@ -15,7 +16,26 @@ class RabiExperiment:
 		print("Beginning initialization window analysis")
 		
 		# Dictionary for recording the window times
-		results = {}
+		results = dict()
+		
+		for n in photon_counts:
+			
+			if verbose: print("Beginning test to get the window time for ", n, " photons")
+			
+			# Get the sweep timeout before working with the timeline
+			timeout = timeout_fn(n)
+			
+			# Reset the board and timeline, delaying to avoid RTIOUnderflow Errors
+			self.board.reset()
+			self.board.get_core().break_realtime()
+			delay(1*s) # Change this as needed, this is to avoid real time running into the cursor
+			
+			start = now_mu()
+			
+			timestamps = self.board.record_rising(apd_port, start, timeout)
+			results[n] = timestamps
+			
+		return results
 		
 		
 	@kernel
@@ -24,7 +44,7 @@ class RabiExperiment:
 		print("Beginning initialization wait analysis")
 		
 		# Dictionary for recording the initialization times
-		results = {}
+		results = dict()
 		def record(board, start, last):
 
 				# Turn of the laser
@@ -32,7 +52,7 @@ class RabiExperiment:
 				board.ttls[laser_port].off()
 
 				results[n] = last - start
-				if verbose: print("Time to detect photons (in mu): ", last-start)
+				if verbose: print("Time to detect photons (in mu): ", last - start)
 		
 		for n in photon_counts:
 		

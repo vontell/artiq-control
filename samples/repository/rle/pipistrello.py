@@ -4,7 +4,7 @@
 # Date: October 21, 2016
 
 from artiq.experiment import Experiment, kernel, us
-from array import array
+import numpy as np
 
 class Board:
 	
@@ -205,6 +205,43 @@ class Board:
 						break
 					else:
 						stamps.pop(0)
+						
+						
+	@kernel
+	def record_rising(self, detector, start, timeout):
+		'''
+		Records the rising edges on a given detector for the given amount of
+		time (timeout). Unlike `register_rising`, this method simply returns
+		a list of timestamps for rising edges that were recorded for a certain
+		period of time. `start` is the starting time to begin recording.
+		'''
+		
+		# Set the timeline pointer to start
+		at_mu(start)
+		
+		# Starting now, begin detecting rising edges for the desired amount of
+		# time
+		self.pmt[detector].gate_rising(timeout)
+		
+		end = now_mu()
+		
+		# Now begin listening for edges and record timestamps
+		stamps = []
+		while True:
+			
+			# Get the timestamp
+			last = self.pmt[detector].timestamp_mu()
+			
+			# Add it to a list
+			if last > 0 and last < end:
+				np.append(stamps, last)
+			
+			# If time is past timeout, stop
+			if last > end:
+				break
+			
+		# Return the results
+		return stamps
 			
 
 	@kernel
