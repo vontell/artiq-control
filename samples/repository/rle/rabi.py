@@ -16,9 +16,9 @@ class RabiExperiment:
 		print("Beginning initialization window analysis")
 		
 		# Dictionary for recording the window times
-		results = dict()
+		results = [(n, 0) for n in photon_counts]
 		
-		for n in photon_counts:
+		for n in range(len(photon_counts)):
 			
 			if verbose: print("Beginning test to get the window time for ", n, " photons")
 			
@@ -33,7 +33,7 @@ class RabiExperiment:
 			start = now_mu()
 			
 			timestamps = self.board.record_rising(apd_port, start, timeout)
-			results[n] = timestamps
+			results[n] = (photon_counts[n], timestamps)
 			
 		return results
 		
