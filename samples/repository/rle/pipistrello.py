@@ -204,7 +204,7 @@ class Board:
 						stamps.pop(0)
 						
 	@kernel
-	def register_rising_in_window(self, detector, handler, start, window, timestamps, threshold=0):
+	def register_rising_in_window(self, detector, handler, start, window, threshold=0):
 		'''
 		Fires a method (handler) when the count of rising edges on a given
  		input detector reaches a certain threshold (which defaults to 0). Returns this board for chaining capabilities. Optionally allows for defining
@@ -222,6 +222,8 @@ class Board:
 			for i in range(1, len(array))[::-1]:
 				array[i] = array[i - 1]
 			array[0] = 0
+			
+		timestamps = [0 for i in range(threshold)]
 		
 		# Set the timeline pointer to start
 		at_mu(start)
@@ -237,7 +239,7 @@ class Board:
 				difference = timestamps[-1] - timestamps[0] > 0
 				if difference > 0 and difference < window:
 						at_mu(last)
-						handler(self, start, window)
+						handler(self, start, timestamps)
 						break
 						
 	@kernel

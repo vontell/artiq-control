@@ -69,6 +69,7 @@ class RabiExperiment:
 		print("Beginning initialization wait analysis")
 		
 		# Dictionary for recording the initialization times
+		@kernel
 		def record(board, start, window):
 
 				# Turn of the laser
@@ -98,6 +99,6 @@ class RabiExperiment:
 			self.board.ttls[laser_port].on();
 			
 			if verbose: print("APD beginning to listen at time ", start)
-			self.board.register_rising(apd_port, record, start, window, threshold=n)
+			self.board.register_rising_in_window(apd_port, record, start, window, threshold=n)
 			
 		return results
