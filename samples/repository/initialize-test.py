@@ -34,10 +34,16 @@ class CounterTest(EnvExperiment):
 		@kernel
 		def timeout_fn(n): return 30*us
 		
-		# Array to store the results in
+		# Array to store the window results in
 		# Note that this must be a preallocated array!
 		windows = [(n, 0, 0, 0) for n in photon_counts]
 				  # n, average, min, max in machine units
+		
+		# Array to store the init time results in
+		# Note that this must be a preallocated array!
+		init_times = [(n, 0, 0) for n in photon_counts]
+				     # n, time from laser start to first photon, time from laser start to last photon
+		
 
 		# Returns a mapping of n (the number of photons to count) to the 
 		# (average, smallest, largest, we will need to decide) window size
@@ -50,10 +56,10 @@ class CounterTest(EnvExperiment):
 		# time it takes from the start of the laser application to the last
 		# timestamp of a received photon (which is a photon that is part of a
 		# sequence of photons that are captured within a given window, given by windows)
-		# init_times = self.rabi.get_time_to_detect(laser_port, apd_port, photon_counts, windows, verbose)
+		init_times = self.rabi.get_time_to_detect(laser_port, apd_port, photon_counts, 1, init_times, windows, verbose)
 
 		print("Finished NV center initialization analysis")
 		print("Tested window times: ", windows)
-		#print("Initialization time results: ", init_times)
+		print("Initialization time results: ", init_times)
 
 		# Then graph the results

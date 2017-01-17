@@ -203,6 +203,42 @@ class Board:
 					else:
 						stamps.pop(0)
 						
+	@kernel
+	def register_rising_in_window(self, detector, handler, start, window, timestamps, threshold=0):
+		'''
+		Fires a method (handler) when the count of rising edges on a given
+ 		input detector reaches a certain threshold (which defaults to 0). Returns this board for chaining capabilities. Optionally allows for defining
+		the start time to begin listening (defaults to now), and the amount of
+		time to listen for (defaults to forever)
+        
+		NOTE: Make sure to call unregister_rising() to reset the detector once done
+				This method will call unregister_rising() when the threshold is
+				reached, but this event may never occur
+        '''
+		
+		@kernel
+		def rotate(array):
+			'''Rotates an array, deleting the oldest value'''
+			for i in range(1, len(array))[::-1]:
+				array[i] = array[i - 1]
+			array[0] = 0
+		
+		# Set the timeline pointer to start
+		at_mu(start)
+		
+		# Starting now, begin detecting rising edges
+		self.pmt[detector]._set_sensitivity(1)
+			
+		while True:
+			last = self.pmt[detector].timestamp_mu()
+			if last > 0:
+				rotate(timestamps)
+				timestamps[0] = last
+				difference = timestamps[-1] - timestamps[0] > 0
+				if difference > 0 and difference < window:
+						at_mu(last)
+						handler(self, start, window)
+						break
 						
 	@kernel
 	def record_rising(self, detector, start, timeout, timestamps):
