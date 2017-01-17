@@ -57,7 +57,7 @@ class RabiExperiment:
 					maximum = time
 			average = int(average / len(windows))
 				
-			results[ind] = [n, average, minimum, maximum]
+			results[ind] = (n, average, minimum, maximum)
 			print("Average in seconds: ", mu_to_seconds(average))
 			
 		return results
@@ -76,7 +76,7 @@ class RabiExperiment:
 				delay(50*us)
 				board.ttls[laser_port].off()
 
-				results[n] = [n, window[0] - start, window[-1] - start]
+				results[n] = (n, window[0] - start, window[-1] - start)
 				if verbose: print("Time to detect photons (in mu): ", (window[0] - start, window[-1] - start))
 		
 		for n in photon_counts:
