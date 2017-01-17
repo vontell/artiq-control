@@ -21,7 +21,7 @@ class CounterTest(EnvExperiment):
 	def run(self):
 
 		# The different number of photons to count for
-		photon_counts = range(10, 11)
+		photon_counts = range(5, 7)
 
 		# The ports / TTL / APD outputs to use
 		laser_port = 0
@@ -31,22 +31,26 @@ class CounterTest(EnvExperiment):
 		verbose = True
 		
 		# The timeout function for sweeping
-		timeout_fn = lambda n: 10*us
+		@kernel
+		def timeout_fn(n): return 30*us
+		
+		# Array to store the results in
+		# Note that this must be a preallocated array!
+		windows = [(n, 0, 0, 0) for n in photon_counts]
+				  # n, average, min, max in machine units
 
 		# Returns a mapping of n (the number of photons to count) to the 
 		# (average, smallest, largest, we will need to decide) window size
 		# needed to get that photon count
 		# Take in timeout_fn, which is a function which, given n, returns
 		# the amount of time we should test / sweep for to assess this window
-		windows = self.rabi.get_photon_windows(laser_port, apd_port, photon_counts, timeout_fn, verbose)
-		#windows = {10: 5*us}
-		
+		windows = self.rabi.get_photon_windows(laser_port, apd_port, photon_counts, timeout_fn, windows, verbose)
 
 		# Returns a mapping of n (the number of photons to count) to the
 		# time it takes from the start of the laser application to the last
 		# timestamp of a received photon (which is a photon that is part of a
 		# sequence of photons that are captured within a given window, given by windows)
-		#init_times = self.rabi.get_time_to_detect(laser_port, apd_port, photon_counts, windows, verbose)
+		# init_times = self.rabi.get_time_to_detect(laser_port, apd_port, photon_counts, windows, verbose)
 
 		print("Finished NV center initialization analysis")
 		print("Tested window times: ", windows)

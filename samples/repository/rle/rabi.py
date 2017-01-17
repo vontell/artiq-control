@@ -1,8 +1,8 @@
 # Configurable tests and experiments for Rabi oscillations
 # in Nitrogen Vacancy Centers. 
 
-from artiq.experiment import kernel, s
-from addict import Dict
+from artiq.experiment import kernel, s, us
+import numpy as np
 
 class RabiExperiment:
   
@@ -11,15 +11,13 @@ class RabiExperiment:
 		self.board = board
 		
 	@kernel
-	def get_photon_windows(self, laser_port, apd_port, photon_counts, timeout_fn, verbose):
+	def get_photon_windows(self, laser_port, apd_port, photon_counts, timeout_fn, results, verbose):
 		
 		print("Beginning initialization window analysis")
 		
-		# Dictionary for recording the window times
-		results = [(n, 0) for n in photon_counts]
-		
-		for n in range(len(photon_counts)):
+		for ind in range(len(photon_counts)):
 			
+			n = photon_counts[ind]
 			if verbose: print("Beginning test to get the window time for ", n, " photons")
 			
 			# Get the sweep timeout before working with the timeline
@@ -32,8 +30,35 @@ class RabiExperiment:
 			
 			start = now_mu()
 			
-			timestamps = self.board.record_rising(apd_port, start, timeout)
-			results[n] = (photon_counts[n], timestamps)
+			# Make a fake pulse
+			self.board.pulse(0, 0.5 * us, 50)
+			
+			timestamps = [0 for i in range(60)]
+			timestamps = self.board.record_rising(apd_port, start, timeout, timestamps)
+			
+			# Get raw windows
+			# CHECK WHEN TIMESTAMPS < WINDOWS SIZE
+			windows = [0 for i in range(len(timestamps) - n)]
+			for i in range(len(timestamps) - n):
+				beginning = timestamps[i]
+				ending = timestamps[i + n - 1]
+				windows[i] = ending - beginning
+				
+			print(windows)
+			average = np.int64(0)
+			minimum = 9223372036854775807
+			maximum = -1
+			for i in range(len(windows)):
+				time = windows[i]
+				average += time
+				if minimum > time:
+					minimum = time
+				if maximum < time:
+					maximum = time
+			average = int(average / len(windows))
+				
+			results[ind] = (n, average, minimum, maximum)
+			print("Average in seconds: ", mu_to_seconds(average))
 			
 		return results
 		

@@ -4,7 +4,6 @@
 # Date: October 21, 2016
 
 from artiq.experiment import Experiment, kernel, us
-import numpy as np
 
 class Board:
 	
@@ -158,13 +157,11 @@ class Board:
 		'''
         
 		half_period = period / float(2)
-		print("Pulse starts at ", now_mu())
 		count = 0
 		while count < length:
 			self.ttls[ttl].pulse(half_period)
 			delay(half_period)
 			count += 1
-		print("Pulse end at ", now_mu())
 		
 	@kernel
 	def pulseDC(self, ttl, length):
@@ -208,12 +205,14 @@ class Board:
 						
 						
 	@kernel
-	def record_rising(self, detector, start, timeout):
+	def record_rising(self, detector, start, timeout, timestamps):
 		'''
 		Records the rising edges on a given detector for the given amount of
 		time (timeout). Unlike `register_rising`, this method simply returns
 		a list of timestamps for rising edges that were recorded for a certain
 		period of time. `start` is the starting time to begin recording.
+		buffer_size is the size of the pre allocated array used to hold 
+		timestamps
 		'''
 		
 		# Set the timeline pointer to start
@@ -226,7 +225,7 @@ class Board:
 		end = now_mu()
 		
 		# Now begin listening for edges and record timestamps
-		stamps = []
+		head = 0
 		while True:
 			
 			# Get the timestamp
@@ -234,14 +233,15 @@ class Board:
 			
 			# Add it to a list
 			if last > 0 and last < end:
-				np.append(stamps, last)
+				timestamps[head] = last
+				head = head + 1
 			
 			# If time is past timeout, stop
-			if last > end:
+			if last > end or self.get_core().get_rtio_counter_mu() > end:
 				break
-			
-		# Return the results
-		return stamps
+				
+		timestamps = timestamps[0 : head + 1]
+		return timestamps
 			
 
 	@kernel
