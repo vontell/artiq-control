@@ -4,6 +4,7 @@
 # Date: October 21, 2016
 
 from artiq.experiment import Experiment, kernel, us
+import numpy as np
 
 class Board:
 	
@@ -219,8 +220,9 @@ class Board:
 		@kernel
 		def rotate(array):
 			'''Rotates an array, deleting the oldest value'''
-			for i in range(1, len(array))[::-1]:
-				array[i] = array[i - 1]
+			length = len(array)
+			for i in range(np.int64(len(array)) - 1):
+				array[length - i - 1] = array[length - i - 2]
 			array[0] = 0
 			
 		timestamps = [0 for i in range(threshold)]
