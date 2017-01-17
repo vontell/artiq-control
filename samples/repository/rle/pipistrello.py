@@ -236,7 +236,7 @@ class Board:
 			if last > 0:
 				rotate(timestamps)
 				timestamps[0] = last
-				difference = timestamps[-1] - timestamps[0] > 0
+				difference = timestamps[-1] - timestamps[0]
 				if difference > 0 and difference < window:
 						at_mu(last)
 						handler(self, start, timestamps)

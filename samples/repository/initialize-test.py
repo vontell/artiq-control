@@ -36,12 +36,12 @@ class CounterTest(EnvExperiment):
 		
 		# Array to store the window results in
 		# Note that this must be a preallocated array!
-		windows = [(n, 0, 0, 0) for n in photon_counts]
+		windows = [[n, 0, 0, 0] for n in photon_counts]
 				  # n, average, min, max in machine units
 		
 		# Array to store the init time results in
 		# Note that this must be a preallocated array!
-		init_times = [(n, 0, 0) for n in photon_counts]
+		init_times = [[n, 0, 0] for n in photon_counts]
 				     # n, time from laser start to first photon, time from laser start to last photon
 		
 
