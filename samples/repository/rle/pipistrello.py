@@ -3,7 +3,7 @@
 # Author: Aaron Vontell
 # Date: October 21, 2016
 
-from artiq.experiment import *
+from artiq.experiment import Experiment, kernel, us
 import numpy as np
 
 class Board:
@@ -158,13 +158,11 @@ class Board:
 		'''
         
 		half_period = period / float(2)
-		print("Pulse starts at ", now_mu())
 		count = 0
 		while count < length:
 			self.ttls[ttl].pulse(half_period)
 			delay(half_period)
 			count += 1
-		print("Pulse end at ", now_mu())
 		
 	@kernel
 	def pulseDC(self, ttl, length):
@@ -174,7 +172,7 @@ class Board:
 		self.ttls[ttl].pulse(length)
 	
 	@kernel
-	def register_rising(self, detector, handler, start, threshold=0):
+	def register_rising(self, detector, handler, start, window, threshold=0):
 		'''
 		Fires a method (handler) when the count of rising edges on a given
  		input detector reaches a certain threshold (which defaults to 0). Returns this board for chaining capabilities. Optionally allows for defining
@@ -192,17 +190,98 @@ class Board:
 		# Starting now, begin detecting rising edges
 		self.pmt[detector]._set_sensitivity(1)
 			
-		count = 0
 		last = 0
+		stamps = array()
 		while True:
 			last = self.pmt[detector].timestamp_mu()
 			if last > 0:
-				count += 1
-				#print("Rising edge at ", last)
-				if count >= threshold:
-					at_mu(last)
-					handler(self, now_mu())
-					break
+				stamps.append(last)
+				if stamps.length >= threshold:
+					if(stamps[stamps.length - 1] - stamps[0] < window):
+						at_mu(last)
+						handler(self, start, last)
+						break
+					else:
+						stamps.pop(0)
+						
+	@kernel
+	def register_rising_in_window(self, detector, handler, start, window, threshold=0):
+		'''
+		Fires a method (handler) when the count of rising edges on a given
+ 		input detector reaches a certain threshold (which defaults to 0). Returns this board for chaining capabilities. Optionally allows for defining
+		the start time to begin listening (defaults to now), and the amount of
+		time to listen for (defaults to forever)
+        
+		NOTE: Make sure to call unregister_rising() to reset the detector once done
+				This method will call unregister_rising() when the threshold is
+				reached, but this event may never occur
+        '''
+		
+		@kernel
+		def rotate(array):
+			'''Rotates an array, deleting the oldest value'''
+			length = len(array)
+			for i in range(np.int64(len(array)) - 1):
+				array[length - i - 1] = array[length - i - 2]
+			array[0] = 0
+			
+		timestamps = [0 for i in range(threshold)]
+		
+		# Set the timeline pointer to start
+		at_mu(start)
+		
+		# Starting now, begin detecting rising edges
+		self.pmt[detector]._set_sensitivity(1)
+			
+		while True:
+			last = self.pmt[detector].timestamp_mu()
+			if last > 0:
+				rotate(timestamps)
+				timestamps[0] = last
+				difference = timestamps[-1] - timestamps[0] > 0
+				if difference > 0 and difference < window:
+						at_mu(last)
+						handler(self, start, timestamps)
+						break
+						
+	@kernel
+	def record_rising(self, detector, start, timeout, timestamps):
+		'''
+		Records the rising edges on a given detector for the given amount of
+		time (timeout). Unlike `register_rising`, this method simply returns
+		a list of timestamps for rising edges that were recorded for a certain
+		period of time. `start` is the starting time to begin recording.
+		buffer_size is the size of the pre allocated array used to hold 
+		timestamps
+		'''
+		
+		# Set the timeline pointer to start
+		at_mu(start)
+		
+		# Starting now, begin detecting rising edges for the desired amount of
+		# time
+		self.pmt[detector].gate_rising(timeout)
+		
+		end = now_mu()
+		
+		# Now begin listening for edges and record timestamps
+		head = 0
+		while True:
+			
+			# Get the timestamp
+			last = self.pmt[detector].timestamp_mu()
+			
+			# Add it to a list
+			if last > 0 and last < end:
+				timestamps[head] = last
+				head = head + 1
+			
+			# If time is past timeout, stop
+			if last > end or self.get_core().get_rtio_counter_mu() > end:
+				break
+				
+		timestamps = timestamps[0 : head + 1]
+		return timestamps
 			
 
 	@kernel
