@@ -56,10 +56,10 @@ class CounterTest(EnvExperiment):
 		# time it takes from the start of the laser application to the last
 		# timestamp of a received photon (which is a photon that is part of a
 		# sequence of photons that are captured within a given window, given by windows)
-		init_times = self.rabi.get_time_to_detect(laser_port, apd_port, photon_counts, windows, 1, init_times, verbose)
+		#init_times = self.rabi.get_time_to_detect(laser_port, apd_port, photon_counts, windows, 1, init_times, verbose)
 
 		print("Finished NV center initialization analysis")
-		print("Tested window times: ", windows)
+		print("Tested window times (in mu): ", windows)
 		print("Initialization time results: ", init_times)
 
 		# Then graph the results

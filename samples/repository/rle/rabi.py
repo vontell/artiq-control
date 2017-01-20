@@ -39,7 +39,7 @@ class RabiExperiment:
 			# Get raw windows
 			# CHECK WHEN TIMESTAMPS < WINDOWS SIZE
 			windows = [0 for i in range(len(timestamps) - n)]
-			for i in range(np.int64(len(timestamps) - n)):
+			for i in range(len(timestamps) - n):
 				beginning = timestamps[i]
 				ending = timestamps[i + n - 1]
 				windows[i] = ending - beginning
@@ -48,7 +48,7 @@ class RabiExperiment:
 			average = np.int64(0)
 			minimum = 9223372036854775807
 			maximum = -1
-			for i in range(np.int64(len(windows))):
+			for i in range(len(windows)):
 				time = windows[i]
 				average += time
 				if minimum > time:
