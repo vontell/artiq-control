@@ -203,9 +203,17 @@ class Board:
 						break
 					else:
 						stamps.pop(0)
-						
+	
 	@kernel
-	def register_rising_in_window(self, detector, handler, start, window, threshold=0):
+	def rotate(self, array):
+		'''Rotates an array, deleting the oldest value'''
+		length = len(array)
+		for i in range(np.int64(len(array)) - 1):
+			array[length - i - 1] = array[length - i - 2]
+		array[0] = 0
+	
+	@kernel
+	def register_rising_in_window(self, detector, handler, start, window, params, threshold=0):
 		'''
 		Fires a method (handler) when the count of rising edges on a given
  		input detector reaches a certain threshold (which defaults to 0). Returns this board for chaining capabilities. Optionally allows for defining
@@ -216,14 +224,6 @@ class Board:
 				This method will call unregister_rising() when the threshold is
 				reached, but this event may never occur
         '''
-		
-		@kernel
-		def rotate(array):
-			'''Rotates an array, deleting the oldest value'''
-			length = len(array)
-			for i in range(np.int64(len(array)) - 1):
-				array[length - i - 1] = array[length - i - 2]
-			array[0] = 0
 			
 		timestamps = [0 for i in range(threshold)]
 		
@@ -236,12 +236,12 @@ class Board:
 		while True:
 			last = self.pmt[detector].timestamp_mu()
 			if last > 0:
-				rotate(timestamps)
+				self.rotate(timestamps)
 				timestamps[0] = last
-				difference = timestamps[-1] - timestamps[0] > 0
+				difference = timestamps[0] - timestamps[-1]
 				if difference > 0 and difference < window:
 						at_mu(last)
-						handler(self, start, timestamps)
+						handler(self, start, timestamps, threshold, params)
 						break
 						
 	@kernel

@@ -10,6 +10,7 @@ import numpy as np
 
 class Sequence:
 	
+	@kernel
 	def __init__(self, output, sequence, executions = 1, delay = 0*us):
 		'''
 		Creates a pulse sequence for later playback on an ARTIQ-enabled board
