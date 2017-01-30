@@ -7,6 +7,7 @@
 from artiq.experiment import *
 from rle.pipistrello import Board
 from rle.rabi import RabiExperiment
+import matplotlib.pyplot as plt
 
 class CounterTest(EnvExperiment):
 
@@ -20,7 +21,7 @@ class CounterTest(EnvExperiment):
 	def run(self):
 
 		# The different number of photons to count for
-		photon_counts = range(5, 7)
+		photon_counts = range(5, 9)
 
 		# The ports / TTL / APD outputs to use
 		laser_port = 0
@@ -60,5 +61,55 @@ class CounterTest(EnvExperiment):
 		print("Finished NV center initialization analysis")
 		print("Tested window times (in mu): ", windows)
 		print("Initialization time results: ", init_times)
+		
+		plot_results(photon_counts, windows, init_times)
 
-		# Then graph the results
+		
+def plot_results(photon_counts, windows, init_times):
+	
+	# Results for photon window times
+	ticks = range(min(photon_counts), max(photon_counts) + 1)
+	averages = [n for n in photon_counts]
+	mins = [n for n in photon_counts]
+	maxs = [n for n in photon_counts]
+	xs = [n for n in photon_counts]
+	for i in range(len(windows)):
+		tup = windows[i]
+		n, average, minimum, maximum = tup
+		xs[i] = n
+		averages[i] = average
+		mins[i] = minimum
+		maxs[i] = maximum
+		
+	to_first_photon = [n for n in photon_counts]
+	to_last_photon = [n for n in photon_counts]
+	time_to_x = [n for n in photon_counts]
+	for i in range(len(init_times)):
+		tup = init_times[i]
+		n, time_first, time_last = tup
+		time_to_x[i] = n
+		to_first_photon[i] = time_first
+		to_last_photon[i] = time_last
+	
+	wins = plt.figure(1)
+	plt.title("Photon Count Window Times")
+	plt.xlabel("Window Size (Photons)")
+	plt.ylabel("Window Time (ns)")
+	plt.xticks(ticks)
+	plt.plot(xs, averages, "-r", label="average")
+	plt.plot(xs, mins, ":b", label="minimum")
+	plt.plot(xs, maxs, "g", label="maximum")
+	plt.legend()
+	wins.show()
+	
+	times = plt.figure(2)
+	plt.title("Time to Photon Window")
+	plt.xlabel("Window Size (Photons)")
+	plt.ylabel("Time to Photon (ns)")
+	plt.xticks(ticks)
+	plt.plot(time_to_x, to_first_photon, "-r", label="Time to first photon")
+	plt.plot(time_to_x, to_last_photon, ":b", label="Time to last photon")
+	plt.legend()
+	times.show()
+	
+	input("Press enter to exit...") # To Pause

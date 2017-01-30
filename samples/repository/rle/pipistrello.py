@@ -207,13 +207,13 @@ class Board:
 	@kernel
 	def rotate(self, array):
 		'''Rotates an array, deleting the oldest value'''
-		length = len(array)
-		for i in range(np.int64(len(array)) - 1):
-			array[length - i - 1] = array[length - i - 2]
+		neg_one = np.int64(-1)
+		array = array[neg_one:] + array[:neg_one]
 		array[0] = 0
+		return array
 	
 	@kernel
-	def register_rising_in_window(self, detector, handler, start, window, params, threshold=0):
+	def register_rising_in_window(self, detector, results, start, window, index, begin, threshold=0):
 		'''
 		Fires a method (handler) when the count of rising edges on a given
  		input detector reaches a certain threshold (which defaults to 0). Returns this board for chaining capabilities. Optionally allows for defining
@@ -226,23 +226,29 @@ class Board:
         '''
 			
 		timestamps = [0 for i in range(threshold)]
+		neg_one = np.int32(-1)
 		
 		# Set the timeline pointer to start
 		at_mu(start)
 		
 		# Starting now, begin detecting rising edges
 		self.pmt[detector]._set_sensitivity(1)
-			
+		
 		while True:
 			last = self.pmt[detector].timestamp_mu()
 			if last > 0:
-				self.rotate(timestamps)
+				
+				# Rotate the timestamp list
+				timestamps = timestamps[neg_one:] + timestamps[:neg_one]
 				timestamps[0] = last
 				difference = timestamps[0] - timestamps[-1]
 				if difference > 0 and difference < window:
 						at_mu(last)
-						handler(self, start, timestamps, threshold, params)
+						# Record results
+						results[index] = (threshold, timestamps[-1] - begin, timestamps[0] - begin)
 						break
+						
+		return results
 						
 	@kernel
 	def record_rising(self, detector, start, timeout, timestamps):

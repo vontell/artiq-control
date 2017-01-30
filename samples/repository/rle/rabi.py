@@ -63,24 +63,13 @@ class RabiExperiment:
 		return results
 		
 	@kernel
-	def record(self, board, begin, window, index, params):
-
-		# Grab params
-		laser_port, results, verbose = params
-
-		# Turn of the laser
-		delay(50*us)
-		board.ttls[laser_port].off()
-
-		results[index] = (index, window[0] - begin, window[-1] - begin)
-		if verbose: print("Time to detect photons (in mu): ", (window[0] - begin, window[-1] - begin))
-		
-	@kernel
 	def get_time_to_detect(self, laser_port, apd_port, photon_counts, windows, method, results, verbose):
 		
 		print("Beginning initialization wait analysis")
 		
-		for n in photon_counts:
+		for ind in range(len(photon_counts)):
+			
+			n = photon_counts[ind]
 		
 			if verbose: print("Beginning init time test to detect ", n , " photons")
 			
@@ -95,20 +84,30 @@ class RabiExperiment:
 						window = minimum
 					else:
 						window = maximum
-						
-			# Load the parameters
-			params = (laser_port, results, verbose)
 		
 			# Reset the board and timeline, delaying to avoid RTIOUnderflow Errors
 			self.board.reset()
 			self.board.get_core().break_realtime()
 			delay(1*s) # Change this as needed
 			
+			
 			start = now_mu()
+			
+			# Make a fake pulse
+			self.board.pulse(0, 0.4 * us, 20)
+			
+			#at_mu(start)
 			if verbose: print("Starting 532 nm pulse at time ", start)
 			self.board.ttls[laser_port].on();
 			
 			if verbose: print("APD beginning to listen at time ", start)
-			self.board.register_rising_in_window(apd_port, self.record, start, window, params, threshold=n)
+			results = self.board.register_rising_in_window(apd_port, results, start, window, ind, start, threshold=n)
+			
+			if verbose: print("Time to window result: ", results)
+			
+			# Turn of the laser
+			at_mu(self.board.get_core().get_rtio_counter_mu())
+			delay(100*us)
+			self.board.ttls[laser_port].off()
 			
 		return results
