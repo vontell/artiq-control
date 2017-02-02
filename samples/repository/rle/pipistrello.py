@@ -213,7 +213,7 @@ class Board:
 		return array
 	
 	@kernel
-	def register_rising_in_window(self, detector, results, start, window, index, begin, threshold=0):
+	def register_rising_in_window(self, detector, results, start, window, index, begin, threshold=0, tolerance=0*us):
 		'''
 		Fires a method (handler) when the count of rising edges on a given
  		input detector reaches a certain threshold (which defaults to 0). Returns this board for chaining capabilities. Optionally allows for defining
@@ -242,7 +242,7 @@ class Board:
 				timestamps = timestamps[neg_one:] + timestamps[:neg_one]
 				timestamps[0] = last
 				difference = timestamps[0] - timestamps[-1]
-				if difference > 0 and difference < window:
+				if difference > 0:# and difference < window + tolerance:
 						at_mu(last)
 						# Record results
 						results[index] = (threshold, timestamps[-1] - begin, timestamps[0] - begin)

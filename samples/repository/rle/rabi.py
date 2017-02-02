@@ -11,7 +11,7 @@ class RabiExperiment:
 		self.board = board
 		
 	@kernel
-	def get_photon_windows(self, laser_port, apd_port, photon_counts, timeout_fn, results, verbose):
+	def get_photon_windows(self, laser_port, apd_port, photon_counts, timeout_fn, results, fake_pulse, verbose):
 		
 		print("Beginning initialization window analysis")
 		
@@ -31,7 +31,10 @@ class RabiExperiment:
 			start = now_mu()
 			
 			# Make a fake pulse
-			self.board.pulse(0, 0.5 * us, 50)
+			for d in fake_pulse:
+				delay(d * us)
+				self.board.pulse(0, 0.2 * us, 1)
+			#self.board.pulse(0, 0.5 * us, 50)
 			
 			timestamps = [0 for i in range(60)]
 			timestamps = self.board.record_rising(apd_port, start, timeout, timestamps)
@@ -44,7 +47,7 @@ class RabiExperiment:
 				ending = timestamps[i + n - 1]
 				windows[i] = ending - beginning
 				
-			print(windows)
+			print("Windows: ", windows)
 			average = np.int64(0)
 			minimum = 9223372036854775807
 			maximum = -1
@@ -63,7 +66,7 @@ class RabiExperiment:
 		return results
 		
 	@kernel
-	def get_time_to_detect(self, laser_port, apd_port, photon_counts, windows, method, results, verbose):
+	def get_time_to_detect(self, laser_port, apd_port, photon_counts, windows, method, results, fake_pulse, verbose, tolerance=0*us):
 		
 		print("Beginning initialization wait analysis")
 		
@@ -90,18 +93,21 @@ class RabiExperiment:
 			self.board.get_core().break_realtime()
 			delay(1*s) # Change this as needed
 			
-			
 			start = now_mu()
 			
-			# Make a fake pulse
-			self.board.pulse(0, 0.4 * us, 20)
-			
-			#at_mu(start)
 			if verbose: print("Starting 532 nm pulse at time ", start)
 			self.board.ttls[laser_port].on();
 			
+			# Make a fake pulse
+			for d in fake_pulse:
+				delay(d * us)
+				self.board.pulse(1, 0.2 * us, 1)
+			#self.board.pulse(0, 0.4 * us, 20)
+			
+			at_mu(start)
+			
 			if verbose: print("APD beginning to listen at time ", start)
-			results = self.board.register_rising_in_window(apd_port, results, start, window, ind, start, threshold=n)
+			results = self.board.register_rising_in_window(apd_port, results, start, window, ind, start, threshold=n, tolerance=tolerance)
 			
 			if verbose: print("Time to window result: ", results)
 			
