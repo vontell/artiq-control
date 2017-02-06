@@ -1,7 +1,7 @@
 # Configurable tests and experiments for Rabi oscillations
 # in Nitrogen Vacancy Centers. 
 
-from artiq.experiment import kernel, s, us
+from artiq.experiment import kernel, s, us, ms
 import numpy as np
 
 class RabiExperiment:
@@ -26,18 +26,20 @@ class RabiExperiment:
 			# Reset the board and timeline, delaying to avoid RTIOUnderflow Errors
 			self.board.reset()
 			self.board.get_core().break_realtime()
-			delay(1*s) # Change this as needed, this is to avoid real time running into the cursor
+			delay(2*s) # Change this as needed, this is to avoid real time running into the cursor
 			
 			start = now_mu()
 			
 			# Make a fake pulse
 			for d in fake_pulse:
 				delay(d * us)
-				self.board.pulse(0, 0.2 * us, 1)
+				self.board.ttls[0].pulse(0.2*us)
 			#self.board.pulse(0, 0.5 * us, 50)
 			
+			at_mu(start)
 			timestamps = [0 for i in range(60)]
 			timestamps = self.board.record_rising(apd_port, start, timeout, timestamps)
+			print("Timestamps:", timestamps)
 			
 			# Get raw windows
 			# CHECK WHEN TIMESTAMPS < WINDOWS SIZE
@@ -66,7 +68,7 @@ class RabiExperiment:
 		return results
 		
 	@kernel
-	def get_time_to_detect(self, laser_port, apd_port, photon_counts, windows, method, results, fake_pulse, verbose, tolerance=0*us):
+	def get_time_to_detect(self, laser_port, apd_port, photon_counts, method, results, fake_pulse, verbose, tolerance=0*us):
 		
 		print("Beginning initialization wait analysis")
 		
@@ -76,7 +78,8 @@ class RabiExperiment:
 		
 			if verbose: print("Beginning init time test to detect ", n , " photons")
 			
-			# Calculate threshold window before dealing with the timeline
+			# Calculate threshold window before dealing with the timeline\
+			'''
 			window = 0
 			for win in windows:
 				tup_n, average, minimum, maximum = win
@@ -87,11 +90,13 @@ class RabiExperiment:
 						window = minimum
 					else:
 						window = maximum
+			'''
 		
 			# Reset the board and timeline, delaying to avoid RTIOUnderflow Errors
 			self.board.reset()
 			self.board.get_core().break_realtime()
-			delay(1*s) # Change this as needed
+			at_mu(self.board.get_core().get_rtio_counter_mu())
+			delay(100*ms) # Change this as needed
 			
 			start = now_mu()
 			
@@ -100,14 +105,14 @@ class RabiExperiment:
 			
 			# Make a fake pulse
 			for d in fake_pulse:
-				delay(d * us)
-				self.board.pulse(1, 0.2 * us, 1)
-			#self.board.pulse(0, 0.4 * us, 20)
+				delay(d)
+				self.board.ttls[0].pulse(0.2 * us)
+			# self.board.pulse(0, 0.4 * us, 20)
 			
 			at_mu(start)
 			
 			if verbose: print("APD beginning to listen at time ", start)
-			results = self.board.register_rising_in_window(apd_port, results, start, window, ind, start, threshold=n, tolerance=tolerance)
+			results = self.board.register_rising(apd_port, results, start, ind, start, threshold=n, tolerance=tolerance)
 			
 			if verbose: print("Time to window result: ", results)
 			

@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 num_trials = 1000
-thresholds = range(1, 20)
+thresholds = range(1, 21)
 max_threshold = max(thresholds)
 fidelity = [0] * max_threshold
 
@@ -26,7 +26,11 @@ for i in range(num_trials):
 		fidelity[i] = fidelity[i] + 1
 
 for i in range(len(fidelity)):
-	fidelity[i] = fidelity[i] / num_trials
+	fidelity[i] = (fidelity[i] / num_trials) * 100
 		
 plt.plot(thresholds, fidelity)
+plt.title("Simulated Initialization Fidelity")
+plt.xticks(thresholds)
+plt.xlabel("Threshold (photons)")
+plt.ylabel("Fidelity (%)")
 plt.show()

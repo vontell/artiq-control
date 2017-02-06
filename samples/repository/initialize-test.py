@@ -18,8 +18,8 @@ class CounterTest(EnvExperiment):
 		self.board = Board(self)
 		self.rabi = RabiExperiment(self.board)
 		
-		self.fake_pulse_window = np.random.exponential(20*us, 20)
-		self.fake_pulse_time = np.random.exponential(20*us, 20)
+		self.fake_pulse_window = np.random.exponential(30*us, 20)
+		self.fake_pulse_time = np.random.exponential(30*us, 20)
 		self.background = np.random.exponential(10 ** -2, 30)
 		self.start_delay = np.random.exponential(10*us)
 		
@@ -36,15 +36,15 @@ class CounterTest(EnvExperiment):
 		photon_counts = range(3, 12)
 
 		# The ports / TTL / APD outputs to use
-		laser_port = 0
+		laser_port = 1
 		apd_port = 0
 
 		# True if we want to print out information during the test
 		verbose = True
 		
 		# The timeout function for sweeping
-		@kernel
-		def timeout_fn(n): return 30*us
+		#@kernel
+		#def timeout_fn(n): return 30*us
 		
 		# Array to store the window results in
 		# Note that this must be a preallocated array!
@@ -62,13 +62,13 @@ class CounterTest(EnvExperiment):
 		# needed to get that photon count
 		# Take in timeout_fn, which is a function which, given n, returns
 		# the amount of time we should test / sweep for to assess this window
-		windows = self.rabi.get_photon_windows(laser_port, apd_port, photon_counts, timeout_fn, windows, self.fake_pulse_window , verbose)
+		# windows = self.rabi.get_photon_windows(laser_port, apd_port, photon_counts, timeout_fn, windows, self.fake_pulse_window , verbose)
 
 		# Returns a mapping of n (the number of photons to count) to the
 		# time it takes from the start of the laser application to the last
 		# timestamp of a received photon (which is a photon that is part of a
 		# sequence of photons that are captured within a given window, given by windows)
-		init_times = self.rabi.get_time_to_detect(laser_port, apd_port, photon_counts, windows, 1, init_times, self.fake_pulse_time, verbose, tolerance=0.5*us)
+		init_times = self.rabi.get_time_to_detect(laser_port, apd_port, photon_counts, 1, init_times, self.fake_pulse_time, verbose, tolerance=0.5*us)
 
 		print("Finished NV center initialization analysis")
 		print("Tested window times (in mu): ", windows)

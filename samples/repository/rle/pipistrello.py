@@ -172,39 +172,6 @@ class Board:
 		self.ttls[ttl].pulse(length)
 	
 	@kernel
-	def register_rising(self, detector, handler, start, window, threshold=0):
-		'''
-		Fires a method (handler) when the count of rising edges on a given
- 		input detector reaches a certain threshold (which defaults to 0). Returns this board for chaining capabilities. Optionally allows for defining
-		the start time to begin listening (defaults to now), and the amount of
-		time to listen for (defaults to forever)
-        
-		NOTE: Make sure to call unregister_rising() to reset the detector once done
-				This method will call unregister_rising() when the threshold is
-				reached, but this event may never occur
-        '''
-		
-		# Set the timeline pointer to start
-		at_mu(start)
-		
-		# Starting now, begin detecting rising edges
-		self.pmt[detector]._set_sensitivity(1)
-			
-		last = 0
-		stamps = array()
-		while True:
-			last = self.pmt[detector].timestamp_mu()
-			if last > 0:
-				stamps.append(last)
-				if stamps.length >= threshold:
-					if(stamps[stamps.length - 1] - stamps[0] < window):
-						at_mu(last)
-						handler(self, start, last)
-						break
-					else:
-						stamps.pop(0)
-	
-	@kernel
 	def rotate(self, array):
 		'''Rotates an array, deleting the oldest value'''
 		neg_one = np.int64(-1)
@@ -213,7 +180,7 @@ class Board:
 		return array
 	
 	@kernel
-	def register_rising_in_window(self, detector, results, start, window, index, begin, threshold=0, tolerance=0*us):
+	def register_rising(self, detector, results, start, index, begin, threshold=0, tolerance=0*us):
 		'''
 		Fires a method (handler) when the count of rising edges on a given
  		input detector reaches a certain threshold (which defaults to 0). Returns this board for chaining capabilities. Optionally allows for defining
@@ -225,7 +192,7 @@ class Board:
 				reached, but this event may never occur
         '''
 			
-		timestamps = [0 for i in range(threshold)]
+		timestamps = [-1 for i in range(threshold)]
 		neg_one = np.int32(-1)
 		
 		# Set the timeline pointer to start
@@ -242,11 +209,11 @@ class Board:
 				timestamps = timestamps[neg_one:] + timestamps[:neg_one]
 				timestamps[0] = last
 				difference = timestamps[0] - timestamps[-1]
-				if difference > 0:# and difference < window + tolerance:
-						at_mu(last)
-						# Record results
-						results[index] = (threshold, timestamps[-1] - begin, timestamps[0] - begin)
-						break
+				if difference > 0 and timestamps[neg_one] > 0:# and difference < window + tolerance:
+					at_mu(last)
+					# Record results
+					results[index] = (threshold, timestamps[-1] - begin, timestamps[0] - begin)
+					break
 						
 		return results
 						
